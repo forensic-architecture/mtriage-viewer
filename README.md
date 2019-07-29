@@ -1,16 +1,16 @@
-# mtriage-server
+# mtriage-viewer
 
 #### note: pre-alpha development, not ready for use.
 
-mtriage-server is a locally-run server and web frontend to interactively
-visualise [mtriage](https://github.com/forensic-architecture/mtriage)
+mtriage-viewer is a locally-run server collected with a web frontend to 
+interactively visualise [mtriage](https://github.com/forensic-architecture/mtriage)
 workflows after they have been run.
 
 
-Ensuring you have Docker installed, you can run mtriage-server with the
+Ensuring you have Docker installed, you can run mtriage-viewer with the
 following command:
 ```
-./mtriage-server -i /path/to/folder
+./mtriage-viewer -i /path/to/folder
 ```
 
 The folder that you pass should be a folder that contains mtriage workflows 
