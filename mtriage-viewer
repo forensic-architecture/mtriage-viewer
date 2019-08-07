@@ -131,7 +131,7 @@ def dev_server(args):
 
 def dev_viewer(args):
     print("Creating container to run viewer...")
-    viewer_name = args.viewer
+    viewer_name = args.viewer if args.viewer else "main"
     viewer_img_name = "{}:{}".format(VIEWER_NAME, viewer_name)
 
     if viewer_name is None or not os.path.exists(
@@ -168,7 +168,6 @@ def dev_viewer(args):
 
 
 if __name__ == "__main__":
-    DEV_COMMANDS = {}
     parser = argparse.ArgumentParser(
         description="Golang server and frontend to visualise an mtriage folder structure."
     )
@@ -176,7 +175,16 @@ if __name__ == "__main__":
         "--input", "-i", help="Path to the folder of elements to serve", required=True
     )
     parser.add_argument(
-        "--viewer", "-v", help="Name of the viewer to use", required=True
+        "--viewer", "-v", help="Name of the viewer to use", required=False
+    )
+    parser.add_argument(
+        "--onlyserver",
+        type=str2bool,
+        nargs="?",
+        const=True,
+        default=False,
+        help="Don't run the viewer",
+        required=False,
     )
     parser.add_argument(
         "--rebuild",
@@ -189,8 +197,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    t_viewer = threading.Thread(target=dev_viewer, args=(args,))
     t_server = threading.Thread(target=dev_server, args=(args,))
-
-    t_viewer.start()
     t_server.start()
+    if not args.onlyserver:
+        t_viewer = threading.Thread(target=dev_viewer, args=(args,))
+        t_viewer.start()
