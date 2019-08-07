@@ -3,14 +3,16 @@
 
 import argparse
 import os
+import threading
 import subprocess as sp
 import signal
 
 SERVER_NAME = "forensicarchitecture/mviewserver"
+VIEWER_NAME = "forensicarchitecture/mview_frontend"
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-def get_cont_name():
+def get_cont_name(prefix="mtriage_server"):
     """ Get name of next mtriage instance based on existing containers. """
     names = sp.check_output(["docker", "ps", "-a", "--format", "{{.Names}}"])
     if isinstance(names, bytes):
@@ -19,15 +21,16 @@ def get_cont_name():
         names = names.split("\n")
 
     seed = 1
-    cont_name = "mtriage_server_{}".format(seed)
+    cont_name = "{}_{}".format(prefix, seed)
     while cont_name in names:
         seed += 1
-        cont_name = "mtriage_server_{}".format(seed)
+        cont_name = "{}_{}".format(prefix, seed)
 
     return cont_name
 
 
-CONT_SERVER_NAME = get_cont_name()
+CONT_SERVER_NAME = get_cont_name("mtriage_server")
+CONT_VIEWER_NAME = get_cont_name("mtriage_viewer")
 
 
 def __build_server():
@@ -104,7 +107,6 @@ def dev_server(args):
         ]
     )
     print("Server running successfully in a container.")
-    print("----------------------------------")
 
     def signal_handler(sig, frame):
         print("Removing containers...")
@@ -120,7 +122,7 @@ def dev_viewer(args):
     viewer_img_name = "{}:{}".format(VIEWER_NAME, viewer_name)
 
     if viewer_name is None or not os.path.exists(
-        "{}/src/lib/viewers/{}".format(DIR_PATH, viewer_name)
+        "{}/viewers/{}".format(DIR_PATH, viewer_name)
     ):
         raise Exception(
             "Not a valid viewer. Pass it with the -v option, making sure a corresponding directory exists in src/lib/viewers."
@@ -144,63 +146,19 @@ def dev_viewer(args):
         ],
         stderr=sp.PIPE,
     )
+    print("Viewer plugin successfully running in container.")
     _, stderr = process.communicate()
+
     if stderr:
         print(stderr)
         exit(1)
-    print(stdout)
-    print("Viewer plugin successfully running in container.")
-    print("----------------------------------")
 
 
-def viewer(args):
-    """ Must be invoked with an input folder and viewer-plugin e.g.:
+def run_viewer(args):
+    dev_viewer(args)
 
-			./mtriage view -i <working_dir> -v <viewer_plugin>
-
-		Server requires that input folder is a correctly formatted mtriage working directory.
-
-		Viewers must be yarn buildable apps living in the src/lib/viewers folder. Their name is taken to be the name
-		of their outer directory. Viewers must specify which etype they accept in their config.yml file.
-
-		Once launched the viewer plugin is available at http://localhost:8081/
-
-		The server is available at http://localhost:8080/, with available endpoints:
-
-		elementIndex                                - return an array of all element ids
-		elements                                    - returns an array of all etyped elements (n.b. potentially slow)
-		element?id=<element_id>                     - serves the element's etype data
-		element?id=<element_id>&media=<media_file>  - serves the media file associated with element
-
-		Example response for 'elementIndex':
-
-		{
-			"Elements": [
-				<el1_id>,
-				<el2_id>,
-				<el3_id>,
-				etc
-			]
-		}
-
-		and 'element?id=<element_id>':
-
-		{
-			"Id": <element_id>,
-			"Etype": <viewer_accepted_etype>,
-			"Media": {
-				<mediatype>: [
-					<media1>,
-					<media2>,
-					<media3>,
-				]
-				etc.
-			}
-		}
-
-	"""
-    pass
-
+def run_server(args):
+    dev_server(args)
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -218,7 +176,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Golang server and frontend to visualise an mtriage folder structure."
     )
-    parser.add_argument("--input", "-i", help="Input Folder", required=True)
+    parser.add_argument("--input", "-i", help="Path to the folder of elements to serve", required=True)
+    parser.add_argument("--viewer", "-v", help="Name of the viewer to use", required=True)
     parser.add_argument(
         "--rebuild",
         type=str2bool,
@@ -229,5 +188,10 @@ if __name__ == "__main__":
         required=False,
     )
     args = parser.parse_args()
+    t_viewer = threading.Thread(target=run_viewer, args=(args,))
+    t_server = threading.Thread(target=run_server, args=(args,))
 
-    dev_server(args)
+    t_viewer.start()
+    t_server.start()
+
+
