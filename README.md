@@ -10,7 +10,7 @@ workflows after they have been run.
 Ensuring you have Docker installed, you can run mtriage-viewer with the
 following command:
 ```
-./mtriage-viewer -i /path/to/folder
+./mtriage-viewer -i /path/to/folder -v example
 ```
 
 The folder that you pass should be a folder that contains mtriage workflows 

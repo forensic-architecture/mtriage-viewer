@@ -11,6 +11,17 @@ SERVER_NAME = "forensicarchitecture/mviewserver"
 VIEWER_NAME = "forensicarchitecture/mview_frontend"
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
+# ---- UTIL -------
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "f", "n", "0"):
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
 
 def get_cont_name(prefix="mtriage_server"):
     """ Get name of next mtriage instance based on existing containers. """
@@ -29,10 +40,12 @@ def get_cont_name(prefix="mtriage_server"):
     return cont_name
 
 
+# ---- GLOBALS ----
 CONT_SERVER_NAME = get_cont_name("mtriage_server")
 CONT_VIEWER_NAME = get_cont_name("mtriage_viewer")
 
 
+# ---- CORE ----
 def __build_server():
     server_img_name = "{}:dev".format(SERVER_NAME)
     print("Creating container to build server...")
@@ -154,30 +167,17 @@ def dev_viewer(args):
         exit(1)
 
 
-def run_viewer(args):
-    dev_viewer(args)
-
-def run_server(args):
-    dev_server(args)
-
-def str2bool(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ("yes", "true", "t", "y", "1"):
-        return True
-    elif v.lower() in ("no", "false", "f", "n", "0"):
-        return False
-    else:
-        raise argparse.ArgumentTypeError("Boolean value expected.")
-
-
 if __name__ == "__main__":
     DEV_COMMANDS = {}
     parser = argparse.ArgumentParser(
         description="Golang server and frontend to visualise an mtriage folder structure."
     )
-    parser.add_argument("--input", "-i", help="Path to the folder of elements to serve", required=True)
-    parser.add_argument("--viewer", "-v", help="Name of the viewer to use", required=True)
+    parser.add_argument(
+        "--input", "-i", help="Path to the folder of elements to serve", required=True
+    )
+    parser.add_argument(
+        "--viewer", "-v", help="Name of the viewer to use", required=True
+    )
     parser.add_argument(
         "--rebuild",
         type=str2bool,
@@ -188,10 +188,9 @@ if __name__ == "__main__":
         required=False,
     )
     args = parser.parse_args()
-    t_viewer = threading.Thread(target=run_viewer, args=(args,))
-    t_server = threading.Thread(target=run_server, args=(args,))
+
+    t_viewer = threading.Thread(target=dev_viewer, args=(args,))
+    t_server = threading.Thread(target=dev_server, args=(args,))
 
     t_viewer.start()
     t_server.start()
-
-
