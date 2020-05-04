@@ -1,32 +1,17 @@
 <template>
   <div>
-    <h1>Selected</h1>
-    <hr/>
-    <div v-for="elements in elementmap.Selected">
-      <div v-if="elements.Elements !== null">
-        <h2>Context: {{elements.Context}}</h2>
-        <h2>Component: {{elements.Component}}</h2>
-        <div class="table">
-          <Elements :elements="elements.Elements" />
-          <Loading v-if="fetching" />
-          <div v-if="error" class="flexc">
-            <h1>A network connection error occurred. Make sure you are correctly configured.</h1>
-          </div>
-        </div>
-      </div>
+    <h1 class="batch-header">Available Batches</h1>
+
+    <Loading v-if="fetching" />
+    <div v-if="error" class="flexc">
+      <h1>A network connection error occurred. Make sure you are correctly configured.</h1>
     </div>
-    <h1>Analysed</h1>
-    <hr/>
-    <div v-for="elements in elementmap.Analysed">
-      <div v-if="elements.Elements !== null">
-        <h2>Context: {{elements.Context}}</h2>
-        <h2>Component: {{elements.Component}}</h2>
+
+    <div v-for="batch in elementmap">
+      <div class="batch-row" v-if="batch.elements !== null" @click="SET_ACTIVE_BATCH(batch)">
+        <h2>{{batch.query}}</h2>
         <div class="table">
-          <Elements :elements="elements.Elements" />
-          <Loading v-if="fetching" />
-          <div v-if="error" class="flexc">
-            <h1>A network connection error occurred. Make sure you are correctly configured.</h1>
-          </div>
+          <ElementsPreview :elements="batch.elements" />
         </div>
       </div>
     </div>
@@ -35,19 +20,18 @@
 
 <script>
 import Loading from './Loading.vue'
-import { mapState, mapActions } from 'vuex'
-import Elements from './Elements.vue'
+import { mapState, mapActions, mapMutations } from 'vuex'
+import ElementsPreview from './ElementsPreview.vue'
 
 export default {
   name: 'ElementTable',
   components: {
     Loading,
-    Elements
+    ElementsPreview
   },
   methods: {
-    ...mapActions([
-      'fetchElements'
-    ])
+    ...mapActions(['fetchElements']),
+    ...mapMutations(['SET_ACTIVE_BATCH']),
   },
   computed: {
     ...mapState({
@@ -69,6 +53,20 @@ h1, h2 {
   text-align: left;
 }
 
+.batch-header {
+  margin-bottom: 20px;
+}
+
+.batch-row {
+  border: 1px solid black;
+  padding: 5px 15px;
+  &:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+  }
+}
+
 hr {
   margin: 15px 0;
 }
@@ -88,5 +86,6 @@ hr {
 .hidden {
   display: none;
 }
+
 
 </style>

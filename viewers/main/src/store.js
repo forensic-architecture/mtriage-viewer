@@ -10,7 +10,8 @@ export default new Vuex.Store({
     version: '0.1',
     fetching: true,
     error: null,
-    elementmap: {}
+    elementmap: {},
+    activeBatch: null,
   },
   mutations: {
     [types.FETCH_ELEMENTS_ATTEMPT] (state) {
@@ -22,7 +23,10 @@ export default new Vuex.Store({
     },
     [types.FETCH_ELEMENTS_ERROR] (state, msg) {
       state.error = msg
-    }
+    },
+    [types.SET_ACTIVE_BATCH] (state, batch) {
+      state.activeBatch = batch
+    },
   },
   actions: {
     fetchElements ({ commit, state }, pages) {

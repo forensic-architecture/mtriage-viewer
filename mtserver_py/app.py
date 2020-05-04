@@ -1,8 +1,9 @@
 import os
 from enum import Enum
 from typing import List
-from flask import Flask, jsonify
 from pathlib import Path
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 
 class StorageType(Enum):
@@ -11,6 +12,7 @@ class StorageType(Enum):
 
 
 app = Flask(__name__)
+CORS(app)
 
 # TODO: pass as CLI args
 MAIN_DIR = Path(
@@ -31,7 +33,7 @@ class LocalBatch:
         self.elements = els
 
     def serialize(self):
-        return [{"query": self.query, "elements": [str(x.name) for x in self.elements]}]
+        return {"query": self.query, "elements": [str(x.name) for x in self.elements]}
 
 
 class Local:
