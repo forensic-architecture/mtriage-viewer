@@ -1,3 +1,11 @@
+// Copyright Forensic Architecture
+// All rights reserved.
+
+// This server makes a folder produced by mtriage, a `Storage`, accessible via a basic HTTP server.
+// On server startup, it indexes the Storage and makes a lightweight representation of it available
+// at '/elementmap'.
+// Batches of elements (i.e., passes produced by an mtriage analyser or selector) are at '/batch'.
+// Individual elements within batches are then query-able at '/batch/{ element_id }'.
 package main
 
 import (
@@ -5,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"flag"
 )
 
 // global element map. This variable is populated when the server starts by
@@ -24,13 +33,20 @@ func main() {
 		log.Println("You need to pass a working directory that exists.")
 		os.Exit(1)
 	}
-	port := ":8080"
 
+	var port string
+	var storage string
+	flag.StringVar(&port, "port", ":8080", "The port where the server should run.")
+	flag.StringVar(&storage, "storage", "local", "The type of storage.")
+
+	flag.Parse()
+
+	port = ":8080"
 	// NOTE: populates ELEMENT_MAP synchronously
-	err = indexComponentDirs(workingDir)
+	elmap, err := getElementMap(workingDir, StorageType(storage))
 
 	if err != nil {
-		panic("Could not index")
+		panic("Could not index for some reason: TODO:")
 		os.Exit(1)
 	}
 
@@ -41,18 +57,16 @@ func main() {
 	http.ListenAndServe(port, nil)
 }
 
-// HANDLERS
 func handleElementMap(w http.ResponseWriter, r *http.Request) {
 	serveJsonData(ELEMENT_MAP, w)
 }
 
 func handleElement(w http.ResponseWriter, r *http.Request) {
 	q, q_err := getQuery(r, "q")
-	context, context_err := getQuery(r, "context")
 	id, id_err := getQuery(r, "id")
 	media, media_err := getQuery(r, "media")
 
-	if q_err != nil || context_err != nil {
+	if q_err != nil {
 		errorHandler(w, r, http.StatusBadRequest)
 		return
 	}
@@ -72,35 +86,31 @@ func handleElement(w http.ResponseWriter, r *http.Request) {
 
 	if hasAnalyser {
 		analyser := terms[1]
-		var output AnalysedDir
+		var output EtypedDir
 		for i := 0; i < len(ELEMENT_MAP.Analysed); i++ {
 			output = ELEMENT_MAP.Analysed[i]
 			if output.Component == analyser {
-				if context == "" || context == output.Context {
-					if hasElement && hasMedia {
-						elPath := getPathToAnalysedElementMedia(output, id, media)
-						http.ServeFile(w, r, elPath)
-					} else {
-						serveJsonData(output, w)
-					}
-					return
+				if hasElement && hasMedia {
+					elPath := getPathToAnalysedElementMedia(output, id, media)
+					http.ServeFile(w, r, elPath)
+				} else {
+					serveJsonData(output, w)
 				}
+				return
 			}
 		}
 	} else {
-		var output SelectedDir
+		var output EtypedDir
 		for i := 0; i < len(ELEMENT_MAP.Selected); i++ {
 			output = ELEMENT_MAP.Selected[i]
 			if output.Component == selector {
-				if context == "" || context == output.Context {
-					if hasElement && hasMedia {
-						elPath := getPathToSelectedElementMedia(output, id, media)
-						http.ServeFile(w, r, elPath)
-					} else {
-						serveJsonData(output, w)
-					}
-					return
+				if hasElement && hasMedia {
+					elPath := getPathToSelectedElementMedia(output, id, media)
+					http.ServeFile(w, r, elPath)
+				} else {
+					serveJsonData(output, w)
 				}
+				return
 			}
 		}
 		// for i := 0; i < len(ELEMENT_MAP.Selected); i++ {

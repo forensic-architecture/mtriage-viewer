@@ -7,81 +7,23 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
-	"log"
 	"errors"
 )
 
-const DATA_DIR = "data"
-const DERIVED_DIR = "derived"
-
-// run on server start
-func indexComponentDirs(dir string) error {
-	log.Println("Making element map...")
-	ELEMENT_MAP = ElementMap{ Selected: []SelectedDir{}, Analysed: []AnalysedDir{} }
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		// skip files
-		if !info.IsDir() {
-			return nil
-		}
-		name := info.Name()
-		// append all selector elements
-		if name == DATA_DIR {
-			elements, err := getChildDirsEtyped(path)
-			if err != nil {
-				panic("somthing")
-			}
-			allBits := strings.Split(path, "/")
-			compName := allBits[len(allBits)-2]
-			context := allBits[len(allBits)-3]
-
-			dir := SelectedDir{
-				Path: path,
-				Context: context,
-				Component: compName,
-				Elements: elements,
-			}
-			ELEMENT_MAP.Selected = append(ELEMENT_MAP.Selected, dir)
-		}
-		// append all derived folders
-		if name == DERIVED_DIR {
-			childDirs, err := getChildDirs(path)
-			if err != nil {
-				panic("somthng")
-			}
-			for i := 0; i < len(childDirs); i++ {
-				dir := childDirs[i]
-				elements, err := getChildDirsEtyped(dir.Path)
-				if err != nil {
-					panic("somthing")
-				}
-				allBits := strings.Split(dir.Path, "/")
-				selector := allBits[len(allBits)-3]
-				context := allBits[len(allBits)-4]
-
-				edir := AnalysedDir{
-					Path: dir.Path,
-					Selector: selector,
-					Context: context,
-					Component: dir.Name,
-					Elements: elements,
-				}
-				ELEMENT_MAP.Analysed = append(ELEMENT_MAP.Analysed, edir)
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
-	return nil
-}
-
-// FILE PATHS
 func dirExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil { return true, nil }
 	if os.IsNotExist(err) { return false, nil }
 	return true, err
+}
+
+// taken from https://golangcode.com/check-if-a-file-exists/
+func fileExists(filename string) bool {
+    info, err := os.Stat(filename)
+    if os.IsNotExist(err) {
+        return false
+    }
+    return !info.IsDir()
 }
 
 func getFilesInDir(dir string, skips []string) []File {
@@ -126,8 +68,8 @@ func getChildDirs(path string) ([]Dir, error) {
 	return dirs, nil
 }
 
-func getChildDirsEtyped(path string) ([]EtypedElement, error) {
-	var els []EtypedElement
+func getChildDirsEtyped(path string) ([]Element, error) {
+	var els []Element
 	childDirs, err := ioutil.ReadDir(path)
 	if err != nil {
 		return els, err
@@ -143,7 +85,10 @@ func getChildDirsEtyped(path string) ([]EtypedElement, error) {
 		str.WriteString(dir.Name())
 		elPath := str.String()
 		// TODO: attempt other casts
-		etypedEl := castToEtype(elPath, getEtype("Any"), dir.Name())
+		etypedEl :=  Element{
+			Id: dir.Name(),
+			Media: getMedia(elPath),
+		}
 		els = append(els, etypedEl)
 	}
 	return els, nil
@@ -182,12 +127,12 @@ func serveJsonData(data interface{}, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(data)
 }
 
-func loadTypedElement(path string) EtypedElement {
+func loadTypedElement(path string) Element {
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
-	element := EtypedElement{}
+	element := Element{}
 	err = json.Unmarshal([]byte(file), &element)
 	if err != nil {
 		panic(err)
@@ -213,7 +158,7 @@ func getQuery(r *http.Request, q string) (string, error) {
 	return query, nil
 }
 
-func getPathToAnalysedElementMedia(dir AnalysedDir, elId string, media string) string {
+func getPathToAnalysedElementMedia(dir EtypedDir, elId string, media string) string {
 	var pathToElement strings.Builder
 
 	idx := -1
@@ -237,7 +182,7 @@ func getPathToAnalysedElementMedia(dir AnalysedDir, elId string, media string) s
 	return pathToElement.String()
 }
 
-func getPathToSelectedElementMedia(dir SelectedDir, elId string, media string) string {
+func getPathToSelectedElementMedia(dir EtypedDir, elId string, media string) string {
 	var pathToElement strings.Builder
 
 	idx := -1

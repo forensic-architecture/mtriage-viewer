@@ -1,6 +1,5 @@
 package main
 
-// INTERNAL TYPES
 type File struct {
 	Path string
 	Name string
@@ -20,31 +19,30 @@ type Dir struct {
 	Kind ElementDirKind
 }
 
-type EtypedElement struct {
+type Element struct {
 	Id string
-	Etype string
 	Media map[string][]string
 }
 
 type EtypedDir struct {
+	Etype string
+	Storagetype StorageType
 	Path string
-	Context string
 	Component string
-	Elements []EtypedElement
-}
-
-type SelectedDir EtypedDir
-
-type AnalysedDir struct {
-	Path string
-	Context string
-	Selector string
-	Component string
-	Elements []EtypedElement
+	Elements []Element
 }
 
 type ElementMap struct {
-	Selected []SelectedDir
-	Analysed []AnalysedDir
+	Selected []EtypedDir
+	Analysed []EtypedDir
 }
+
+type StorageType string
+const(
+	// Storage is a folder that exists locally, on the filesystem where this server is running.
+	Local StorageType	= "local"
+	// Storage is an S3 bucket.
+	S3					= "s3"
+)
+
 
