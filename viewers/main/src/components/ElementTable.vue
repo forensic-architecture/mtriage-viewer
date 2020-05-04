@@ -11,7 +11,7 @@
       <div class="batch-row" v-if="batch.elements !== null" @click="SET_ACTIVE_BATCH(batch)">
         <h2>{{batch.query}}</h2>
         <div class="table">
-          <ElementsPreview :elements="batch.elements" />
+          <BatchPreview :batch="batch" />
         </div>
       </div>
     </div>
@@ -21,13 +21,13 @@
 <script>
 import Loading from './Loading.vue'
 import { mapState, mapActions, mapMutations } from 'vuex'
-import ElementsPreview from './ElementsPreview.vue'
+import BatchPreview from './BatchPreview.vue'
 
 export default {
   name: 'ElementTable',
   components: {
     Loading,
-    ElementsPreview
+    BatchPreview
   },
   methods: {
     ...mapActions(['fetchElements']),

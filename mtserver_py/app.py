@@ -2,6 +2,7 @@ import os
 from enum import Enum
 from typing import List
 from pathlib import Path
+from configparser import RawConfigParser
 from flask import Flask, jsonify
 from flask_cors import CORS
 
@@ -22,9 +23,10 @@ STORAGE_TYPE = StorageType.Local
 
 
 class LocalBatch:
-    def __init__(self, query, path):
+    def __init__(self, query, path, etype):
         self.query = query
         self.path = path
+        self.etype = etype
         self.index()
 
     def index(self):
@@ -33,7 +35,11 @@ class LocalBatch:
         self.elements = els
 
     def serialize(self):
-        return {"query": self.query, "elements": [str(x.name) for x in self.elements]}
+        return {
+            "query": self.query,
+            "elements": [str(x.name) for x in self.elements],
+            "etype": self.etype,
+        }
 
 
 class Local:
@@ -43,7 +49,10 @@ class Local:
             for d in dirs:
                 absp = Path(root) / d
                 if (absp / ".mtbatch").is_file():
-                    batches.append(LocalBatch(d, absp))
+                    cfgParser = RawConfigParser()
+                    cfgParser.read(absp / ".mtbatch")
+                    etype = cfgParser.get("etype", "etype")
+                    batches.append(LocalBatch(d, absp, etype))
         return batches
 
 
