@@ -61,24 +61,23 @@ func getLocalEM(dir string) (ElementMap, error) {
 				var dirEtype string
 				mtbatch := dir.Path + "/.mtbatch"
 				if fileExists(mtbatch) {
-					file, err = os.Open(mtconfig)
+					file, err := os.Open(mtbatch)
 					if err != nil {
-						log.Fatal(err)
+						panic(err)
 					}
 					defer file.Close()
 
-					scanner = bufio.NewScanner(file)
+					scanner := bufio.NewScanner(file)
 					for scanner.Scan() {
 						dirEtype = scanner.Text()
 						break
 					}
 				}
 
-				// TODO: we r here... implementing `getElements` now that we have the etype.
-				elements, err := getElements(dir.Path, dirEtype)
+				elements, err := getLocalElements(dir.Path, dirEtype)
 
 				if err != nil {
-					panic("somthing")
+					panic("TODO:")
 				}
 				allBits := strings.Split(dir.Path, "/")
 				selector := allBits[len(allBits)-3]
@@ -97,4 +96,31 @@ func getLocalEM(dir string) (ElementMap, error) {
 		panic(err)
 	}
 	return nil
+}
+
+func getLocalElements(path string, etype string) ([]Element, error) {
+	var els []Element
+	childDirs, err := ioutil.ReadDir(path)
+	if err != nil {
+		return els, err
+	}
+	for i := 0; i < len(childDirs); i++ {
+		dir := childDirs[i]
+		if !dir.IsDir() {
+			continue
+		}
+		var str strings.Builder
+		str.WriteString(path)
+		str.WriteString("/")
+		str.WriteString(dir.Name())
+		elPath := str.String()
+		// TODO: attempt other casts
+		etypedEl :=  Element{
+			Id: dir.Name(),
+			Media: getMedia(elPath),
+		}
+		els = append(els, etypedEl)
+	}
+	return els, nil
+
 }

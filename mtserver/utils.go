@@ -68,32 +68,7 @@ func getChildDirs(path string) ([]Dir, error) {
 	return dirs, nil
 }
 
-func getChildDirsEtyped(path string) ([]Element, error) {
-	var els []Element
-	childDirs, err := ioutil.ReadDir(path)
-	if err != nil {
-		return els, err
-	}
-	for i := 0; i < len(childDirs); i++ {
-		dir := childDirs[i]
-		if !dir.IsDir() {
-			continue
-		}
-		var str strings.Builder
-		str.WriteString(path)
-		str.WriteString("/")
-		str.WriteString(dir.Name())
-		elPath := str.String()
-		// TODO: attempt other casts
-		etypedEl :=  Element{
-			Id: dir.Name(),
-			Media: getMedia(elPath),
-		}
-		els = append(els, etypedEl)
-	}
-	return els, nil
 
-}
 
 // IO
 func errorHandler(w http.ResponseWriter, r* http.Request, status int) {
