@@ -1,22 +1,24 @@
 <template>
-  <div>
-    <h1> TODO: switch based on etype </h1>
-    <Container :batch="batch" label="tank" :threshold="0" />
-  </div>
+  <component :is="viewerComp" :batch="batch"></component>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import Container from '../cvjson/Container'
+
+import CvJsonViewer from '../cvjson/Container'
 
 export default {
   components: {
-    Container,
+    CvJsonViewer,
   },
   computed: {
     ...mapState({
       batch: state => state.activeBatch
-    })
+    }),
+    viewerComp: function() {
+      const etypePrefix = !!this.batch ? this.batch.etype : "any"
+      return `${etypePrefix}Viewer`
+    }
   }
 }
 </script>
