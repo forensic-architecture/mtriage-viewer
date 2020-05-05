@@ -4,7 +4,8 @@
     <div id="body-container">
       <div class="container">
         <div class="content-case">
-          <ElementTable />
+          <ElementTable v-if="!activeBatch" />
+          <ViewBatch v-else/>
         </div>
       </div>
     </div>
@@ -15,15 +16,18 @@
 import { mapState } from 'vuex'
 import Header from './components/Header.vue'
 import ElementTable from './components/ElementTable.vue'
+import ViewBatch from './components/ViewBatch.vue'
 
 export default {
   name: 'app',
   computed: mapState({
     version: 'version',
+    activeBatch: state => state.activeBatch,
   }),
   components: {
     Header,
-    ElementTable
+    ElementTable,
+    ViewBatch,
   }
 }
 </script>

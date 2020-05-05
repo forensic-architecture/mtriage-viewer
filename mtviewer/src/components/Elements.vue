@@ -2,9 +2,9 @@
   <div class="graph-container">
     <Element
       v-for="(element) in elements"
-      :key="element.Id"
-      :elId="element.Id"
-      :media="element.Media"
+      :key="element"
+      :elId="element"
+      :media="[]"
     ></Element>
   </div>
 </template>
