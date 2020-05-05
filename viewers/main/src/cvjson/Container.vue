@@ -27,13 +27,13 @@
     },
     methods: {
       ...mapActions([
-        'cvjson_fetchRankedElements'
+        'cvjson_fetchElements'
       ]),
       scroll() {
         window.onscroll = () => {
           let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight === document.documentElement.offsetHeight
           if (bottomOfWindow) {
-          this.fetchRankedElements(this.label)
+          this.fetchElements(this.label)
           }
         }
       }
@@ -47,7 +47,7 @@
       })
     },
     mounted: function () {
-      this.cvjson_fetchRankedElements(this.batch)
+      this.cvjson_fetchElements(this.batch)
       this.scroll()
     }
   }

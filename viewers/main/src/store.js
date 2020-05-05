@@ -13,7 +13,7 @@ export default new Vuex.Store({
     error: null,
     elementmap: {},
     activeBatch: STUB_BATCH,
-    elements: [],
+    activeElements: [],
   },
   mutations: {
     [types.FETCH_ELEMENTS_ATTEMPT] (state) {
@@ -35,7 +35,7 @@ export default new Vuex.Store({
       state.fetching = true
     },
     [types.FETCH_NEXT_ELEMENTS] (state, elements) {
-      state.elements = state.elements.concat(elements)
+      state.activeElements = state.activeElements.concat(elements)
       state.fetching = false
     },
     [types.FETCH_NEXT_ELEMENTS_ERROR] (state, msg) {
@@ -58,17 +58,17 @@ export default new Vuex.Store({
           commit(types.FETCH_ELEMENTS_ERROR, err.message)
         })
     },
-    cvjson_fetchRankedElements ({ commit, state }, batch) {
+    cvjson_fetchElements ({ commit, state }, batch) {
       commit(types.FETCH_NEXT_ELEMENTS_ATTEMPT)
-      const fromIndex = this.state.elements.length
-      api.cvjson_fetchRankedElements(batch, fromIndex)
+      const fromIndex = this.state.activeElements.length
+      api.cvjson_fetchElements(batch, fromIndex)
         .then(result => {
           commit(types.FETCH_NEXT_ELEMENTS, result)
         })
-        .catch(err => {
-          console.log(err.message)
-          commit(types.FETCH_NEXT_ELEMENTS_ERROR, err.message)
-        })
+        // .catch(err => {
+        //   console.log(err.message)
+        //   commit(types.FETCH_NEXT_ELEMENTS_ERROR, err.message)
+        // })
     },
   }
 })
