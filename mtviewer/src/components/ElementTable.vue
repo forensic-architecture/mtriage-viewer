@@ -30,7 +30,7 @@ export default {
     BatchPreview
   },
   methods: {
-    ...mapActions(['fetchElements']),
+    ...mapActions(['fetchBatches']),
     ...mapMutations(['SET_ACTIVE_BATCH']),
   },
   computed: {
@@ -41,7 +41,7 @@ export default {
     })
   },
   mounted: function () {
-    this.fetchElements()
+    this.fetchBatches()
   }
 }
 </script>

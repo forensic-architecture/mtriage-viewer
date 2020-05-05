@@ -1,6 +1,6 @@
 # mtriage-viewer
 
-#### note: pre-alpha development, not ready for use.
+#### note: pre-alpha development, not ready for use. Everything will break!
 
 mtriage-viewer is a locally-run server collected with a web frontend to 
 interactively visualise [mtriage](https://github.com/forensic-architecture/mtriage)
