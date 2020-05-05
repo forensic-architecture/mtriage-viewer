@@ -1,9 +1,10 @@
 import os
+import json
 from enum import Enum
 from typing import List
 from pathlib import Path
 from configparser import RawConfigParser
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 
@@ -25,7 +26,8 @@ STORAGE_TYPE = StorageType.Local
 class LocalBatch:
     def __init__(self, query, path, etype):
         self.query = query
-        self.path = path
+        self.path = Path(path)
+        self.elements = [f for f in self.path.glob("**/*") if f.is_dir()]
         self.etype = etype
         self.index()
 
@@ -40,6 +42,28 @@ class LocalBatch:
             "elements": [str(x.name) for x in self.elements],
             "etype": self.etype,
         }
+
+    @staticmethod
+    def unpack_element(pth: Path, suffixes: List[str] = ['.json']) -> dict:
+        media = {}
+        for f in [t for t in pth.iterdir() if t.suffix in suffixes]:
+            with open(f) as fl:
+                data = json.load(fl)
+            media[f.name] = data
+
+        return {
+            "id": pth.name,
+            "media": media,
+        }
+
+    def get_element(self, el_id: str):
+        matching = [el for el in self.elements if el.name == el_id]
+        if len(matching) != 1:
+            return None
+        return LocalBatch.unpack_element(matching[0])
+
+    def all_elements(self):
+        return [LocalBatch.unpack_element(el) for el in self.elements]
 
 
 class Local:
@@ -83,7 +107,20 @@ def elementmap():
 
 @app.route("/batch")
 def batch():
-    return "Batch route"
+    arg_query = request.args.get('q')
+    arg_element = request.args.get('el')
+
+    matching = [b for b in ELEMENT_MAP["batches"] if b.query == arg_query]
+    if len(matching) != 1:
+        return jsonify({})
+
+    batch = matching[0]
+
+    if arg_element is not None:
+        print('doing it')
+        return jsonify(batch.get_element(arg_element))
+
+    return jsonify(batch.all_elements())
 
 
 if __name__ == "__main__":
