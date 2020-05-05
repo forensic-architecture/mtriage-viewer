@@ -5,14 +5,21 @@ import types from './mutation-types'
 
 Vue.use(Vuex)
 
+const STUB_BATCH = {"elements":["bz9dsdDgZIE","7X2aVY8w994","mw8rsJJ1IU4","FE6ldph-64U","1NvOehAj5Uo","F_9awSnnbus","aXzMyN11CyE","rn7Pm6DsRTs","_rank","f7AVuE4DVcQ","MTlSLQujiTM"],"etype":"CvJson","query":"KerasPretrained"}
+
 export default new Vuex.Store({
   state: {
     version: '0.1',
     fetching: true,
     error: null,
     elementmap: {},
-    activeBatch: null,
+    activeBatch: STUB_BATCH,
+    activeLabels: ["tank", "pistol"],
     activeElements: [],
+    batch: {
+      label: "tank",
+      threshold: 0.1
+    }
   },
   mutations: {
     [types.FETCH_BATCHES_ATTEMPT] (state) {
@@ -28,13 +35,20 @@ export default new Vuex.Store({
     [types.SET_ACTIVE_BATCH] (state, batch) {
       state.activeBatch = batch
     },
+    [types.UPDATE_THRESHOLD] (state, threshold) {
+      state.batch.threshold = threshold
+    },
+    [types.UPDATE_LABEL] (state, label) {
+      state.batch.label = label
+    },
 
     /* CvJson */
     [types.FETCH_NEXT_ELEMENTS_ATTEMPT] (state) {
       state.fetching = true
     },
     [types.FETCH_NEXT_ELEMENTS] (state, elements) {
-      state.activeElements = state.activeElements.concat(elements)
+      // state.activeElements = state.activeElements.concat(elements)
+      state.activeElements = elements
       state.fetching = false
     },
     [types.FETCH_NEXT_ELEMENTS_ERROR] (state, msg) {

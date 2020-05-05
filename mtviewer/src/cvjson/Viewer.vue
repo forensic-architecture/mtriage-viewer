@@ -1,6 +1,29 @@
 <template>
-  <div class="table">
+  <div>
     <h1>Showing matches for: {{ label }}</h1>
+    <v-container fluid>
+      <v-row>
+        <v-col>
+          <v-select
+            v-model="storeLabel"
+            color="black"
+            :items="labels"
+            label="Label"
+          />
+        </v-col>
+        <v-col>
+          <v-slider
+            color="black"
+            v-model="storeThreshold"
+            class="align-center"
+            :step="0.05"
+            :max="1"
+            :min="0"
+            hide-details
+          />
+        </v-col>
+      </v-row>
+    </v-container>
     <Graph :elements="elements" :label="label" :threshold="threshold" />
     <Loading v-if="!!fetching" />
     <div v-if="!!error" class="flexc">
@@ -15,15 +38,14 @@
   import { mapState, mapActions } from 'vuex'
 
   export default {
-    name: 'Container',
+    name: 'CvJsonViewer',
     components: {
       Loading,
       Graph
     },
     props: {
       batch: Object,
-      label: String,
-      threshold: Number
+      labels: Array,
     },
     methods: {
       ...mapActions([
@@ -43,8 +65,25 @@
         fetching: 'fetching',
         elements: 'activeElements',
         error: 'error',
-        ranking: 'ranking'
-      })
+        threshold: state => state.batch.threshold,
+        label: state => state.batch.label,
+      }),
+      storeThreshold: {
+        get() {
+          return this.$store.state.batch.threshold
+        },
+        set(value) {
+          this.$store.commit('UPDATE_THRESHOLD', value)
+        }
+      },
+      storeLabel: {
+        get() {
+          return this.$store.state.batch.label
+        },
+        set(value) {
+          this.$store.commit('UPDATE_LABEL', value)
+        },
+      },
     },
     mounted: function () {
       this.cvjson_fetchElements(this.batch)
@@ -58,6 +97,9 @@
 
   h1 {
     padding-bottom: 30px;
+  }
+
+  .control-panel {
   }
 
   .table {

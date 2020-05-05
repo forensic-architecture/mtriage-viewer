@@ -1,11 +1,11 @@
 <template>
-  <component :is="viewerComp" :batch="batch"></component>
+  <component :is="viewerComp" :batch="batch" :labels="labels"></component>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 
-import CvJsonViewer from '../cvjson/Container'
+import CvJsonViewer from '../cvjson/Viewer.vue'
 
 export default {
   components: {
@@ -13,7 +13,8 @@ export default {
   },
   computed: {
     ...mapState({
-      batch: state => state.activeBatch
+      batch: state => state.activeBatch,
+      labels: state => state.activeLabels,
     }),
     viewerComp: function() {
       const etypePrefix = !!this.batch ? this.batch.etype : "any"

@@ -24,7 +24,7 @@ import { mapState, mapActions, mapMutations } from 'vuex'
 import BatchPreview from './BatchPreview.vue'
 
 export default {
-  name: 'ElementTable',
+  name: 'BatchList',
   components: {
     Loading,
     BatchPreview

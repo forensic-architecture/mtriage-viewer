@@ -1,8 +1,9 @@
 <template>
   <div
     :class="containerClasses"
+    @click="expandItem"
   >
-    <div class="graph-item-body" v-on:click="expandItem">
+    <div class="graph-item-body" >
       <div class="graph-item-title">{{ title }}</div>
     </div>
     <div class="graph-item-footer">
@@ -110,7 +111,8 @@ export default {
       } else {
         return 'graph-item-extension no-display'
       }
-    }
+    },
+
   },
   data: function() {
     return {
