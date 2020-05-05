@@ -59,7 +59,7 @@ const monthNames = [
 ];
 
 export default {
-  name: 'GraphItem',
+  name: 'VideoCell',
   components: {
     FrameMap
   },

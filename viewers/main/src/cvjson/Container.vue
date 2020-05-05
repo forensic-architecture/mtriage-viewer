@@ -33,7 +33,7 @@
         window.onscroll = () => {
           let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight === document.documentElement.offsetHeight
           if (bottomOfWindow) {
-          this.fetchElements(this.label)
+          // this.fetchElements(this.label)
           }
         }
       }
@@ -41,7 +41,7 @@
     computed: {
       ...mapState({
         fetching: 'fetching',
-        elements: 'elements',
+        elements: 'activeElements',
         error: 'error',
         ranking: 'ranking'
       })

@@ -37,7 +37,9 @@ function cvjson_fetchElements (batch, fromIndex, itemsPerPage = 15) {
   return Promise.resolve()
     .then(() => axios.get(allUrl))
     .then(resp => {
-      return resp.data.map(el => ({ element_id: el.id, ...el.media["preds.json"] }))
+      return resp.data
+        .map(el => ({ element_id: el.id, ...el.media["preds.json"] }))
+        .filter(el => el.id !== '_rank')
       // NOTE: past slicing to do paging
       // const urls = rankedElements.slice(fromIndex, fromIndex + itemsPerPage).map(getElementUrl)
       // const promises = urls.map(url => Promise.resolve(url).then(url => axios.get(url).catch(err => null)))

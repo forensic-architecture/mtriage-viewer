@@ -2,6 +2,7 @@
   <div class="graph-container">
     <VideoCell
       v-for="(video, key) in elements"
+      v-if="!!video.webpage_url"
       :key="key"
       :video_id="video.webpage_url.split('=')[1]"
       :title="video.title"
@@ -33,6 +34,7 @@
     },
     methods: {
       getFrames(video) {
+        if (!video.labels) return null
         const lbls = Object.keys(video.labels)
         if (lbls.includes(this.label)) {
           return video.labels[this.label].frames
@@ -40,12 +42,13 @@
         return null
       },
       getScores(video) {
+        if (!video.labels) return null
         const lbls = Object.keys(video.labels)
         if (lbls.includes(this.label)) {
           return video.labels[this.label].scores
         }
         return null
       }
-    }
+    },
   }
 </script>

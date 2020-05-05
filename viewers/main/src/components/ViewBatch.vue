@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1> TODO: switch based on etype </h1>
-    <Container :batch="batch" label="tank" :threshold="0.6" />
+    <Container :batch="batch" label="tank" :threshold="0" />
   </div>
 </template>
 
