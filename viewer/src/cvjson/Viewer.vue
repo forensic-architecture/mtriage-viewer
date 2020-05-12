@@ -1,29 +1,29 @@
 <template>
   <div>
     <h1>Showing matches for: {{ label }}</h1>
-    <v-container fluid>
-      <v-row>
-        <v-col>
-          <v-select
-            v-model="storeLabel"
-            color="black"
-            :items="labels"
-            label="Label"
-          />
-        </v-col>
-        <v-col>
-          <v-slider
-            color="black"
-            v-model="storeThreshold"
-            class="align-center"
-            :step="0.05"
-            :max="1"
-            :min="0"
-            hide-details
-          />
-        </v-col>
-      </v-row>
-    </v-container>
+    <!-- <v&#45;container fluid> -->
+    <!--   <v&#45;row> -->
+    <!--     <v&#45;col> -->
+    <!--       <v&#45;select -->
+    <!--         v&#45;model="storeLabel" -->
+    <!--         color="black" -->
+    <!--         :items="labels" -->
+    <!--         label="Label" -->
+    <!--       /> -->
+    <!--     </v&#45;col> -->
+    <!--     <v&#45;col> -->
+    <!--       <v&#45;slider -->
+    <!--         color="black" -->
+    <!--         v&#45;model="storeThreshold" -->
+    <!--         class="align&#45;center" -->
+    <!--         :step="0.05" -->
+    <!--         :max="1" -->
+    <!--         :min="0" -->
+    <!--         hide&#45;details -->
+    <!--       /> -->
+    <!--     </v&#45;col> -->
+    <!--   </v&#45;row> -->
+    <!-- </v&#45;container> -->
     <Graph :elements="elements" :label="label" :threshold="threshold" />
     <Loading v-if="!!fetching" />
     <div v-if="!!error" class="flexc">

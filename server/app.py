@@ -188,6 +188,8 @@ def elementmap():
 def batch():
     arg_query = request.args.get('q')
     arg_element = request.args.get('el')
+    if not arg_query:
+        return jsonify([])
 
     matching = [b for b in ELEMENT_MAP["batches"] if b.query.strip("/") == arg_query.strip("/")]
 
