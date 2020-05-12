@@ -5,7 +5,9 @@ import types from './mutation-types'
 
 Vue.use(Vuex)
 
-const STUB_BATCH = {"elements":["bz9dsdDgZIE","7X2aVY8w994","mw8rsJJ1IU4","FE6ldph-64U","1NvOehAj5Uo","F_9awSnnbus","aXzMyN11CyE","rn7Pm6DsRTs","_rank","f7AVuE4DVcQ","MTlSLQujiTM"],"etype":"CvJson","query":"KerasPretrained"}
+// const STUB_BATCH = {"elements":["bz9dsdDgZIE","7X2aVY8w994","mw8rsJJ1IU4","FE6ldph-64U","1NvOehAj5Uo","F_9awSnnbus","aXzMyN11CyE","rn7Pm6DsRTs","_rank","f7AVuE4DVcQ","MTlSLQujiTM"],"etype":"CvJson","query":"KerasPretrained"}
+const STUB_BATCH = null
+
 export default new Vuex.Store({
   state: {
     version: '0.1',
@@ -13,21 +15,32 @@ export default new Vuex.Store({
     error: null,
     elementmap: {},
     activeBatch: STUB_BATCH,
+    activeLabels: ["tank", "pistol"],
     activeElements: [],
+    batch: {
+      label: "tank",
+      threshold: 0.1
+    }
   },
   mutations: {
-    [types.FETCH_ELEMENTS_ATTEMPT] (state) {
+    [types.FETCH_BATCHES_ATTEMPT] (state) {
       state.fetching = true
     },
-    [types.FETCH_ELEMENTS] (state, elementmap) {
+    [types.FETCH_BATCHES] (state, elementmap) {
       state.elementmap = elementmap
       state.fetching = false
     },
-    [types.FETCH_ELEMENTS_ERROR] (state, msg) {
+    [types.FETCH_BATCHES_ERROR] (state, msg) {
       state.error = msg
     },
     [types.SET_ACTIVE_BATCH] (state, batch) {
       state.activeBatch = batch
+    },
+    [types.UPDATE_THRESHOLD] (state, threshold) {
+      state.batch.threshold = threshold
+    },
+    [types.UPDATE_LABEL] (state, label) {
+      state.batch.label = label
     },
 
     /* CvJson */
@@ -35,7 +48,8 @@ export default new Vuex.Store({
       state.fetching = true
     },
     [types.FETCH_NEXT_ELEMENTS] (state, elements) {
-      state.activeElements = state.activeElements.concat(elements)
+      // state.activeElements = state.activeElements.concat(elements)
+      state.activeElements = elements
       state.fetching = false
     },
     [types.FETCH_NEXT_ELEMENTS_ERROR] (state, msg) {
@@ -48,14 +62,14 @@ export default new Vuex.Store({
 
   },
   actions: {
-    fetchElements ({ commit, state }, pages) {
-      commit(types.FETCH_ELEMENTS_ATTEMPT)
-      api.fetchElements()
+    fetchBatches ({ commit, state }, pages) {
+      commit(types.FETCH_BATCHES_ATTEMPT)
+      api.fetchBatches()
         .then(result => {
-          commit(types.FETCH_ELEMENTS, result.data)
+          commit(types.FETCH_BATCHES, result.data)
         })
         .catch(err => {
-          commit(types.FETCH_ELEMENTS_ERROR, err.message)
+          commit(types.FETCH_BATCHES_ERROR, err.message)
         })
     },
     cvjson_fetchElements ({ commit, state }, batch) {

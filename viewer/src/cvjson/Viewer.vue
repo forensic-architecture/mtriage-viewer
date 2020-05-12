@@ -1,6 +1,29 @@
 <template>
-  <div class="table">
+  <div>
     <h1>Showing matches for: {{ label }}</h1>
+    <!-- <v&#45;container fluid> -->
+    <!--   <v&#45;row> -->
+    <!--     <v&#45;col> -->
+    <!--       <v&#45;select -->
+    <!--         v&#45;model="storeLabel" -->
+    <!--         color="black" -->
+    <!--         :items="labels" -->
+    <!--         label="Label" -->
+    <!--       /> -->
+    <!--     </v&#45;col> -->
+    <!--     <v&#45;col> -->
+    <!--       <v&#45;slider -->
+    <!--         color="black" -->
+    <!--         v&#45;model="storeThreshold" -->
+    <!--         class="align&#45;center" -->
+    <!--         :step="0.05" -->
+    <!--         :max="1" -->
+    <!--         :min="0" -->
+    <!--         hide&#45;details -->
+    <!--       /> -->
+    <!--     </v&#45;col> -->
+    <!--   </v&#45;row> -->
+    <!-- </v&#45;container> -->
     <Graph :elements="elements" :label="label" :threshold="threshold" />
     <Loading v-if="!!fetching" />
     <div v-if="!!error" class="flexc">
@@ -15,15 +38,14 @@
   import { mapState, mapActions } from 'vuex'
 
   export default {
-    name: 'Container',
+    name: 'CvJsonViewer',
     components: {
       Loading,
       Graph
     },
     props: {
       batch: Object,
-      label: String,
-      threshold: Number
+      labels: Array,
     },
     methods: {
       ...mapActions([
@@ -43,8 +65,25 @@
         fetching: 'fetching',
         elements: 'activeElements',
         error: 'error',
-        ranking: 'ranking'
-      })
+        threshold: state => state.batch.threshold,
+        label: state => state.batch.label,
+      }),
+      storeThreshold: {
+        get() {
+          return this.$store.state.batch.threshold
+        },
+        set(value) {
+          this.$store.commit('UPDATE_THRESHOLD', value)
+        }
+      },
+      storeLabel: {
+        get() {
+          return this.$store.state.batch.label
+        },
+        set(value) {
+          this.$store.commit('UPDATE_LABEL', value)
+        },
+      },
     },
     mounted: function () {
       this.cvjson_fetchElements(this.batch)
@@ -58,6 +97,9 @@
 
   h1 {
     padding-bottom: 30px;
+  }
+
+  .control-panel {
   }
 
   .table {

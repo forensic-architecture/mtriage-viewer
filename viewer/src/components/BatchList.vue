@@ -24,13 +24,13 @@ import { mapState, mapActions, mapMutations } from 'vuex'
 import BatchPreview from './BatchPreview.vue'
 
 export default {
-  name: 'ElementTable',
+  name: 'BatchList',
   components: {
     Loading,
     BatchPreview
   },
   methods: {
-    ...mapActions(['fetchElements']),
+    ...mapActions(['fetchBatches']),
     ...mapMutations(['SET_ACTIVE_BATCH']),
   },
   computed: {
@@ -41,7 +41,7 @@ export default {
     })
   },
   mounted: function () {
-    this.fetchElements()
+    this.fetchBatches()
   }
 }
 </script>

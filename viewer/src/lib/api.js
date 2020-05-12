@@ -48,7 +48,7 @@ function cvjson_fetchElements (batch, fromIndex, itemsPerPage = 15) {
 }
 
 export default {
-  fetchElements: () => axios.get(`${ROOT_URL}/elementmap`),
+  fetchBatches: () => axios.get(`${ROOT_URL}/elementmap`),
   fetchElement: elementId => axios.get(`${ROOT_URL}/element?id=${elementId}`),
   cvjson_fetchElements,
   cvjson_fetchRankings,

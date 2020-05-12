@@ -4,7 +4,7 @@
     <div id="body-container">
       <div class="container">
         <div class="content-case">
-          <ElementTable v-if="!activeBatch" />
+          <BatchList v-if="!activeBatch" />
           <ViewBatch v-else/>
         </div>
       </div>
@@ -15,7 +15,7 @@
 <script>
 import { mapState } from 'vuex'
 import Header from './components/Header.vue'
-import ElementTable from './components/ElementTable.vue'
+import BatchList from './components/BatchList.vue'
 import ViewBatch from './components/ViewBatch.vue'
 
 export default {
@@ -26,7 +26,7 @@ export default {
   }),
   components: {
     Header,
-    ElementTable,
+    BatchList,
     ViewBatch,
   }
 }

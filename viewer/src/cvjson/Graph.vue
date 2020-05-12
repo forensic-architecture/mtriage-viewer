@@ -30,7 +30,7 @@
     props: {
       elements: Array,
       label: String,
-      threshold: Number
+      threshold: Number,
     },
     methods: {
       getFrames(video) {
