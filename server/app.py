@@ -20,7 +20,7 @@ app = Flask(__name__)
 CORS(app)
 
 # TODO: pass as CLI args
-# ROOT =  "/Users/lachlankermode/code/fa/mtriage/media/demo_official/3/Youtube/derived"
+# ROOT =  "/Users/lachlankermode/code/_fa/mtriage/media/demo_official/3/Youtube/derived"
 # STORAGE_TYPE = StorageType.Local
 
 ROOT = "lk-iceland-personal"
@@ -38,6 +38,13 @@ class Batch(ABC):
         self.etype = etype
         self.elements = self.index_elements()
 
+    def serialize(self):
+        return {
+            "query": self.query,
+            "elements": [str(Path(x).name) for x in self.elements],
+            "etype": self.etype,
+        }
+
     @abstractmethod
     def index_elements(self):
         pass
@@ -50,13 +57,6 @@ class LocalBatch(Batch):
 
     def index_elements(self):
         return [x for x in self.path.glob("**/*") if x.is_dir()]
-
-    def serialize(self):
-        return {
-            "query": self.query,
-            "elements": [str(x.name) for x in self.elements],
-            "etype": self.etype,
-        }
 
     @staticmethod
     def unpack_element(pth: Path, suffixes: List[str] = ['.json']) -> dict:
@@ -80,15 +80,45 @@ class LocalBatch(Batch):
     def all_elements(self):
         return [LocalBatch.unpack_element(el) for el in self.elements]
 
+
 class S3Batch(Batch):
-    def __init__(self, query, etype, bucket):
-        self.bucket = bucket
+    def __init__(self, query, etype, root):
+        # self.resource = boto3.resource('s3')
+        self.client = boto3.client('s3')
+        self.root = root
         super().__init__(query, etype)
 
     def index_elements(self):
-        # TODO:
-        print(f"Indexing with query: {self.query}, etype: {self.etype}, and bucket: {self.bucket}")
-        return []
+        response = self.client.list_objects_v2(
+            Bucket=self.root,
+            Prefix =self.query,
+            Delimiter='/')
+        return [x.get('Prefix') for x in response.get('CommonPrefixes')]
+
+    @staticmethod
+    def unpack_element(root:str, pth: str, suffixes: List[str] = ['.json']) -> dict:
+        media = {}
+        # NOTE: preds.json hardcoded here
+        # TODO: need to cache these requests so that they only need to be retrieved once
+        content_object = boto3.resource('s3').Object(root, f"{pth}preds.json")
+        file_content = content_object.get().get('Body').read().decode('utf-8')
+        json_content = json.loads(file_content)
+        media["preds.json"] = json_content
+
+        return {
+            "id": Path(pth).name,
+            "media": media,
+        }
+
+    def get_element(self, el_id: str):
+        matching = [el for el in self.elements if Path(el).name == el_id]
+        if len(matching) != 1:
+            return None
+        return S3Batch.unpack_element(self.root, matching[0])
+
+    def all_elements(self):
+        return [S3Batch.unpack_element(self.root, el) for el in self.elements]
+
 
 class Local:
     @staticmethod
@@ -101,6 +131,7 @@ class Local:
                     etype = read_etype(absp / ".mtbatch")
                     batches.append(LocalBatch(d, etype, absp))
         return batches
+
 
 class S3:
     @staticmethod
@@ -125,8 +156,7 @@ class S3:
             etype = read_etype(local_fp)
             batches.append(S3Batch(fold, etype, root))
 
-
-        return []
+        return batches
 
 
 def index(root: str, storage_type: StorageType):
@@ -139,13 +169,13 @@ def index(root: str, storage_type: StorageType):
     storage, reads the presumed etype, and presents an overview of available
     batches.
     """
-    batches = {
-        StorageType.Local: Local.get_batches(root),
-        StorageType.S3: S3.get_batches(root),
-    }.get(storage_type, [])
+    get_batches = {
+        StorageType.Local: Local.get_batches,
+        StorageType.S3: S3.get_batches,
+    }.get(storage_type, lambda _: [])
 
     return {
-        "batches": batches,
+        "batches": get_batches(root),
     }
 
 
@@ -159,14 +189,14 @@ def batch():
     arg_query = request.args.get('q')
     arg_element = request.args.get('el')
 
-    matching = [b for b in ELEMENT_MAP["batches"] if b.query == arg_query]
+    matching = [b for b in ELEMENT_MAP["batches"] if b.query.strip("/") == arg_query.strip("/")]
+
     if len(matching) != 1:
         return jsonify({})
 
     batch = matching[0]
 
     if arg_element is not None:
-        print('doing it')
         return jsonify(batch.get_element(arg_element))
 
     return jsonify(batch.all_elements())
