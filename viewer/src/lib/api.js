@@ -30,12 +30,14 @@ function cvjson_fetchRankings (batch) {
     })
 }
 
-function cvjson_fetchElements (batch, fromIndex, itemsPerPage = 15) {
+function cvjson_fetchElements (batch, label, pageNo, limit) {
   const { query } = batch
-  const allUrl = `${ROOT_URL}/batch?q=${query}`
+  // const allUrl = `${ROOT_URL}/batch?q=${query}`
+  const rankedUrl = `${ROOT_URL}/batch?q=${query}&rank_by=${label}&limit=${limit}&page=${pageNo}`
+  console.log(rankedUrl)
 
   return Promise.resolve()
-    .then(() => axios.get(allUrl))
+    .then(() => axios.get(rankedUrl))
     .then(resp => {
       return resp.data
         .map(el => ({ element_id: el.id, ...el.media["preds.json"] }))

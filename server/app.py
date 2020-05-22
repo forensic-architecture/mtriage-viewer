@@ -77,36 +77,43 @@ class LocalBatch(Batch):
             return None
         return LocalBatch.unpack_element(matching[0])
 
-    def all_elements(self):
+    def get_elements(self, page=0, limit=10):
         return [LocalBatch.unpack_element(el) for el in self.elements]
 
 
 class S3Batch(Batch):
     def __init__(self, query, etype, root):
-        # self.resource = boto3.resource('s3')
+        self.bucket = boto3.resource('s3').Bucket(root)
         self.client = boto3.client('s3')
         self.root = root
+        self.ranking = {} # optionally set in `index_elements`
         super().__init__(query, etype)
 
     def index_elements(self):
         response = self.client.list_objects_v2(
             Bucket=self.root,
             Prefix =self.query,
-            Delimiter='/')
-        return [x.get('Prefix') for x in response.get('CommonPrefixes')]
+            Delimiter='/'
+        )
+        els = [x.get('Prefix') for x in response.get('CommonPrefixes')]
 
-    @staticmethod
-    def unpack_element(root:str, pth: str, suffixes: List[str] = ['.json']) -> dict:
+        if any(re.match('.*\_\_RANKING', line) for line in els):
+            self.ranking = self.unpack_element("__RANKING")['media']['rankings.json']
+
+        return els
+
+    def unpack_element(self, el: str, suffixes: List[str] = ['.json']) -> dict:
+        elpaths = [x.key for x in self.bucket.objects.filter(Prefix=f"{self.query}{el}") if Path(x.key).suffix in suffixes]
+
         media = {}
-        # NOTE: preds.json hardcoded here
-        # TODO: need to cache these requests so that they only need to be retrieved once
-        content_object = boto3.resource('s3').Object(root, f"{pth}preds.json")
-        file_content = content_object.get().get('Body').read().decode('utf-8')
-        json_content = json.loads(file_content)
-        media["preds.json"] = json_content
+        for elpath in elpaths:
+            content_object = boto3.resource('s3').Object(self.root, elpath)
+            file_content = content_object.get().get('Body').read().decode('utf-8')
+            json_content = json.loads(file_content)
+            media[Path(elpath).name] = json_content
 
         return {
-            "id": Path(pth).name,
+            "id": Path(el).name,
             "media": media,
         }
 
@@ -114,10 +121,18 @@ class S3Batch(Batch):
         matching = [el for el in self.elements if Path(el).name == el_id]
         if len(matching) != 1:
             return None
-        return S3Batch.unpack_element(self.root, matching[0])
+        return self.unpack_element(matching[0])
 
-    def all_elements(self):
-        return [S3Batch.unpack_element(self.root, el) for el in self.elements]
+    def get_elements(self, page=0, limit=10, rank_by=None):
+        start_idx = page * limit
+        end_idx = start_idx + (limit - 1)
+
+        els_to_give = self.elements[start_idx:end_idx]
+        if rank_by is not None and rank_by in self.ranking:
+            rank = self.ranking[rank_by]
+            els_to_give = [el for el in rank[start_idx:end_idx]]
+
+        return [self.unpack_element(el) for el in els_to_give]
 
 
 class Local:
@@ -188,6 +203,10 @@ def elementmap():
 def batch():
     arg_query = request.args.get('q')
     arg_element = request.args.get('el')
+    arg_limit = int(request.args.get('limit')) or 10
+    arg_page = int(request.args.get('page')) or 0
+    arg_sorter = request.args.get('sorter') or 'tank'
+
     if not arg_query:
         return jsonify([])
 
@@ -201,7 +220,7 @@ def batch():
     if arg_element is not None:
         return jsonify(batch.get_element(arg_element))
 
-    return jsonify(batch.all_elements())
+    return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=arg_sorter))
 
 
 if __name__ == "__main__":

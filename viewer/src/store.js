@@ -18,8 +18,8 @@ export default new Vuex.Store({
     activeLabels: ["tank", "pistol"],
     activeElements: [],
     batch: {
-      label: "tank",
-      threshold: 0.1
+      label: "rifle",
+      threshold: 0
     }
   },
   mutations: {
@@ -74,8 +74,8 @@ export default new Vuex.Store({
     },
     cvjson_fetchElements ({ commit, state }, batch) {
       commit(types.FETCH_NEXT_ELEMENTS_ATTEMPT)
-      const fromIndex = this.state.activeElements.length
-      api.cvjson_fetchElements(batch, fromIndex)
+      const page = 0
+      api.cvjson_fetchElements(batch, state.batch.label, page, 10)
         .then(result => {
           commit(types.FETCH_NEXT_ELEMENTS, result)
         })
