@@ -108,7 +108,10 @@ class S3Batch(Batch):
         return els
 
     def unpack_element(self, el: str, suffixes: List[str] = ['.json']) -> dict:
-        elpaths = [x.key for x in boto3.resource('s3').Bucket(self.root).objects.filter(Prefix=f"{self.query}{el}") if Path(x.key).suffix in suffixes]
+        prefix = el if el.startswith(self.query) else f"{self.query}{el}"
+        elpaths = [x.key for x in
+            boto3.resource('s3').Bucket(self.root).objects.filter(Prefix=prefix)
+                   if Path(x.key).suffix in suffixes]
 
         media = {}
         for elpath in elpaths:
