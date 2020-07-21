@@ -49,7 +49,7 @@ export default new Vuex.Store({
     },
     [types.FETCH_NEXT_ELEMENTS] (state, elements) {
       // state.activeElements = state.activeElements.concat(elements)
-      state.activeElements = elements
+      state.activeElements = [...state.activeElements, ...elements]
       state.fetching = false
     },
     [types.FETCH_NEXT_ELEMENTS_ERROR] (state, msg) {
@@ -72,10 +72,10 @@ export default new Vuex.Store({
           commit(types.FETCH_BATCHES_ERROR, err.message)
         })
     },
-    cvjson_fetchElements ({ commit, state }, batch) {
+    cvjson_fetchElements ({ commit, state }, { batch, pageNo }) {
       commit(types.FETCH_NEXT_ELEMENTS_ATTEMPT)
-      const page = 0
-      api.cvjson_fetchElements(batch, state.batch.label, page, 10)
+      const page = pageNo !== null ? pageNo : 0
+      return api.cvjson_fetchElements(batch, state.batch.label, page, 10)
         .then(result => {
           commit(types.FETCH_NEXT_ELEMENTS, result)
         })

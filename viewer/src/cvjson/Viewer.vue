@@ -1,31 +1,32 @@
 <template>
   <div>
     <h1>Showing matches for: {{ label }}</h1>
-    <!-- <v&#45;container fluid> -->
-    <!--   <v&#45;row> -->
-    <!--     <v&#45;col> -->
-    <!--       <v&#45;select -->
-    <!--         v&#45;model="storeLabel" -->
-    <!--         color="black" -->
-    <!--         :items="labels" -->
-    <!--         label="Label" -->
-    <!--       /> -->
-    <!--     </v&#45;col> -->
-    <!--     <v&#45;col> -->
-    <!--       <v&#45;slider -->
-    <!--         color="black" -->
-    <!--         v&#45;model="storeThreshold" -->
-    <!--         class="align&#45;center" -->
-    <!--         :step="0.05" -->
-    <!--         :max="1" -->
-    <!--         :min="0" -->
-    <!--         hide&#45;details -->
-    <!--       /> -->
-    <!--     </v&#45;col> -->
-    <!--   </v&#45;row> -->
-    <!-- </v&#45;container> -->
+    <v-container fluid>
+      <v-row>
+        <v-col>
+          <v-select
+            v-model="storeLabel"
+            color="black"
+            :items="labels"
+            label="Label"
+          />
+        </v-col>
+        <v-col>
+          <v-slider
+            color="black"
+            v-model="storeThreshold"
+            class="align-center"
+            :step="0.05"
+            :max="1"
+            :min="0"
+            hide-details
+          />
+        </v-col>
+      </v-row>
+    </v-container>
     <Graph :elements="elements" :label="label" :threshold="threshold" />
     <Loading v-if="!!fetching" />
+    <div v-show='!fetching' class='button' @click='nextPage'>Load more</div>
     <div v-if="!!error" class="flexc">
       <h1>A network connection occurred. Make sure you are correctly configured with a running backend.</h1>
     </div>
@@ -47,17 +48,22 @@
       batch: Object,
       labels: Array,
     },
+    data() {
+      return { pageNo: 0 }
+    },
     methods: {
       ...mapActions([
         'cvjson_fetchElements'
       ]),
-      scroll() {
-        window.onscroll = () => {
-          let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight === document.documentElement.offsetHeight
-          if (bottomOfWindow) {
-          // this.fetchElements(this.label)
-          }
-        }
+      nextPage() {
+        const me = this
+        const { batch, pageNo } = this
+        this.cvjson_fetchElements({ batch, pageNo })
+          .then(() => {
+            me.pageNo += 1;
+            console.log('Page number now '+me.pageNo+'.')
+          })
+
       }
     },
     computed: {
@@ -86,8 +92,13 @@
       },
     },
     mounted: function () {
-      this.cvjson_fetchElements(this.batch)
-      this.scroll()
+      const { batch, pageNo } = this
+      const me = this
+      this.cvjson_fetchElements({ batch, pageNo })
+        .then(() => {
+          me.pageNo += 1;
+          console.log('Page number now '+me.pageNo+'.')
+        })
     }
   }
 </script>
