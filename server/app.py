@@ -2,26 +2,30 @@ import os
 import re
 import json
 import boto3 # s3 client
+import pickle
 from enum import Enum
 from typing import List
+from types import SimpleNamespace
 from pathlib import Path
 from abc import ABC, abstractmethod
 from configparser import RawConfigParser
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+# TODO: pass as CLI args
+# ROOT =  "/Users/lachlankermode/code/_fa/mtriage/media/demo_official/3/Youtube/derived"
+# STORAGE_TYPE = StorageType.Local
 
-class StorageType(Enum):
-    Local = 1
-    S3 = 2
-
+EM_STORE = './mtbatches/map.pkl'
 
 app = Flask(__name__)
 CORS(app)
 
-# TODO: pass as CLI args
-# ROOT =  "/Users/lachlankermode/code/_fa/mtriage/media/demo_official/3/Youtube/derived"
-# STORAGE_TYPE = StorageType.Local
+
+
+class StorageType(Enum):
+    Local = 1
+    S3 = 2
 
 ROOT = "lk-iceland-personal"
 STORAGE_TYPE = StorageType.S3
@@ -33,10 +37,13 @@ def read_etype(local_fp: Path) -> str:
 
 
 class Batch(ABC):
-    def __init__(self, query, etype):
+    def __init__(self, query, etype, elements=None):
         self.query = query
         self.etype = etype
-        self.elements = self.index_elements()
+        if elements is not None:
+            self.elements = elements
+        else:
+            self.elements = self.index_elements()
 
     def serialize(self):
         return {
@@ -51,9 +58,9 @@ class Batch(ABC):
 
 
 class LocalBatch(Batch):
-    def __init__(self, query, etype, path):
+    def __init__(self, query, etype, path, elements=None):
         self.path = Path(path)
-        super().__init__(query, etype)
+        super().__init__(query, etype, elements=elements)
 
     def index_elements(self):
         return [x for x in self.path.glob("**/*") if x.is_dir()]
@@ -82,15 +89,13 @@ class LocalBatch(Batch):
 
 
 class S3Batch(Batch):
-    def __init__(self, query, etype, root):
-        self.bucket = boto3.resource('s3').Bucket(root)
-        self.client = boto3.client('s3')
+    def __init__(self, query, etype, root, elements=None):
         self.root = root
         self.ranking = {} # optionally set in `index_elements`
-        super().__init__(query, etype)
+        super().__init__(query, etype, elements=elements)
 
     def index_elements(self):
-        response = self.client.list_objects_v2(
+        response = boto3.client('s3').list_objects_v2(
             Bucket=self.root,
             Prefix =self.query,
             Delimiter='/'
@@ -103,7 +108,7 @@ class S3Batch(Batch):
         return els
 
     def unpack_element(self, el: str, suffixes: List[str] = ['.json']) -> dict:
-        elpaths = [x.key for x in self.bucket.objects.filter(Prefix=f"{self.query}{el}") if Path(x.key).suffix in suffixes]
+        elpaths = [x.key for x in boto3.resource('s3').Bucket(self.root).objects.filter(Prefix=f"{self.query}{el}") if Path(x.key).suffix in suffixes]
 
         media = {}
         for elpath in elpaths:
@@ -134,6 +139,24 @@ class S3Batch(Batch):
 
         return [self.unpack_element(el) for el in els_to_give]
 
+def save_map(mp):
+    with open(EM_STORE, 'wb') as fp:
+        pickle.dump([(x.__class__.__name__, x.__dict__) for x in mp['batches']], fp)
+
+def load_map():
+    with open(EM_STORE, 'rb') as fp:
+        raw = pickle.load(fp)
+
+        # NB: reconstructs class and its init args from the file on disk
+        batches = [(
+            globals()[typ],
+            { k: dct[k] for k in ['query', 'etype', 'elements', 'root'] }
+        ) for (typ, dct) in raw]
+
+        data = {
+            'batches': [Batch(**args) for (Batch, args) in batches]
+        }
+    return data
 
 class Local:
     @staticmethod
@@ -146,7 +169,6 @@ class Local:
                     etype = read_etype(absp / ".mtbatch")
                     batches.append(LocalBatch(d, etype, absp))
         return batches
-
 
 class S3:
     @staticmethod
@@ -173,7 +195,6 @@ class S3:
 
         return batches
 
-
 def index(root: str, storage_type: StorageType):
     """
     Runs on server start, indexing the Storage.
@@ -196,21 +217,29 @@ def index(root: str, storage_type: StorageType):
 
 @app.route("/elementmap")
 def elementmap():
-    return jsonify([x.serialize() for x in ELEMENT_MAP["batches"]])
+    mp = load_map()
+    return jsonify([x.serialize() for x in mp["batches"]])
 
 
 @app.route("/batch")
 def batch():
+    mp = load_map()
     arg_query = request.args.get('q')
     arg_element = request.args.get('el')
-    arg_limit = int(request.args.get('limit')) or 10
-    arg_page = int(request.args.get('page')) or 0
-    arg_sorter = request.args.get('sorter') or 'tank'
+
+    arg_limit = request.args.get('limit')
+    arg_limit = 10 if arg_limit is None else int(arg_limit)
+
+    arg_page = request.args.get('page')
+    arg_page = 0 if arg_page is None else int(arg_page)
+
+    arg_sorter = request.args.get('sorter')
+    if arg_sorter is None: arg_sorter = 'tank'
 
     if not arg_query:
         return jsonify([])
 
-    matching = [b for b in ELEMENT_MAP["batches"] if b.query.strip("/") == arg_query.strip("/")]
+    matching = [b for b in mp["batches"] if b.query.strip("/") == arg_query.strip("/")]
 
     if len(matching) != 1:
         return jsonify({})
@@ -222,8 +251,7 @@ def batch():
 
     return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=arg_sorter))
 
-
 if __name__ == "__main__":
-    global ELEMENT_MAP
-    ELEMENT_MAP = index(ROOT, STORAGE_TYPE)
+    mp = index(ROOT, STORAGE_TYPE)
+    save_map(mp)
     app.run()

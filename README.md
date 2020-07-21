@@ -10,7 +10,9 @@ after they have been run.
 ```
 cd server
 poetry install
-poetry run python app.py
+poetry shell
+export FLASK_ENV=development
+python app.py
 ```
 
 Modify `ROOT` and `STORAGE_TYPE` variables inside app.py to point to another

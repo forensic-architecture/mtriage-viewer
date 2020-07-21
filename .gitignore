@@ -3,3 +3,4 @@ tags.lock
 tags.temp
 
 server/mtbatches/
+server/__pycache__
