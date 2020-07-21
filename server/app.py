@@ -89,9 +89,9 @@ class LocalBatch(Batch):
 
 
 class S3Batch(Batch):
-    def __init__(self, query, etype, root, elements=None):
+    def __init__(self, query, etype, root, ranking={}, elements=None):
         self.root = root
-        self.ranking = {} # optionally set in `index_elements`
+        self.ranking = ranking # optionally set in `index_elements`
         super().__init__(query, etype, elements=elements)
 
     def index_elements(self):
@@ -153,7 +153,7 @@ def load_map():
         # NB: reconstructs class and its init args from the file on disk
         batches = [(
             globals()[typ],
-            { k: dct[k] for k in ['query', 'etype', 'elements', 'root'] }
+            { k: dct[k] for k in ['query', 'etype', 'elements', 'root', 'ranking'] }
         ) for (typ, dct) in raw]
 
         data = {
