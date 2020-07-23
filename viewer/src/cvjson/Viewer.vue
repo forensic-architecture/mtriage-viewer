@@ -94,6 +94,7 @@
     mounted: function () {
       const { batch, pageNo } = this
       const me = this
+      batch.label = this.storeLabel
       this.cvjson_fetchElements({ batch, pageNo })
         .then(() => {
           me.pageNo += 1;

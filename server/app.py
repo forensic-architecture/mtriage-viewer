@@ -236,8 +236,8 @@ def batch():
     arg_page = request.args.get('page')
     arg_page = 0 if arg_page is None else int(arg_page)
 
-    arg_sorter = request.args.get('sorter')
-    if arg_sorter is None: arg_sorter = 'tank'
+    rank_by = request.args.get('rank_by')
+    if rank_by is None: rank_by = 'tank'
 
     if not arg_query:
         return jsonify([])
@@ -252,7 +252,7 @@ def batch():
     if arg_element is not None:
         return jsonify(batch.get_element(arg_element))
 
-    return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=arg_sorter))
+    return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=rank_by))
 
 if __name__ == "__main__":
     mp = index(ROOT, STORAGE_TYPE)

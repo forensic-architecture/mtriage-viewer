@@ -32,7 +32,6 @@ function cvjson_fetchRankings (batch) {
 
 function cvjson_fetchElements (batch, label, pageNo, limit) {
   const { query } = batch
-  // const allUrl = `${ROOT_URL}/batch?q=${query}`
   const rankedUrl = `${ROOT_URL}/batch?q=${query}&rank_by=${label}&limit=${limit}&page=${pageNo}`
 
   return Promise.resolve()
