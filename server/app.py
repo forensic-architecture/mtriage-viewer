@@ -53,6 +53,9 @@ class Batch(ABC):
             "etype": self.etype,
         }
 
+    def get(self, attr):
+        return self.__dict__.get(attr)
+
     @abstractmethod
     def index_elements(self):
         pass
@@ -272,11 +275,23 @@ def batch():
         return jsonify({ "ciao": "bella" })
 
 
-
-@app.route("/rankings")
-def ranking():
+@app.route("/batch_attribute")
+def batch_attribute():
+    """
+    Get an attribute on all batches, or a single batch.
+    Specify the name of the attribute with `a`.
+    Specify the particular batch with `batch` (if blank will return attributes for all batches).
+    """
     mp = load_map()
-    return jsonify([x.ranking for x in mp["batches"]])
+    q = request.args.get("q")
+    attr = request.args.get("a")
+    if q is None:
+        return jsonify([x.get(attr) for x in mp["batches"]])
+    try:
+        batch = next((b for b in mp["batches"] if b.query.strip("/") == q.strip("/")))
+        return jsonify(batch.get(attr))
+    except:
+        return jsonify(None)
 
 if __name__ == "__main__":
     mp = index(ROOT, STORAGE_TYPE)

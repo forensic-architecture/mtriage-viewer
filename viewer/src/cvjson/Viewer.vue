@@ -56,7 +56,8 @@
     },
     methods: {
       ...mapActions([
-        'cvjson_fetchElements'
+        'cvjson_fetchElements',
+        'fetchAttribute'
       ]),
       nextPage() {
         const me = this
@@ -101,7 +102,6 @@
           return this.$store.state.batch.label
         },
         set(value) {
-          alert('we here')
           this.refetchElements(value)
           this.$store.commit('UPDATE_LABEL', value)
         },
@@ -110,6 +110,7 @@
     mounted: function () {
       const { batch } = this
       this.batch.label = this.storeLabel
+      this.fetchAttribute({ attribute: "ranking", query: this.batch.query })
     }
   }
 </script>

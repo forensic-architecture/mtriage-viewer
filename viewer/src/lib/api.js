@@ -21,21 +21,30 @@ const ROOT_URL = 'http://localhost:5000'
 
 function cvjson_fetchRankings (batch) {
   const { query } = batch
-  const rankUrl = `${ROOT_URL}/batch?q=${query}&el=_rank`
+  const url = `${ROOT_URL}/batch?q=${query}&el=_rank`
 
   return Promise.resolve()
-    .then(() => axios.get(rankUrl))
+    .then(() => axios.get(url))
     .then(resp => {
       return resp.data.media["ranking.json"]
     })
 }
 
+function fetchAttribute (attr, query) {
+  const url = `${ROOT_URL}/batch_attribute?a=${attr}&q=${query}`
+  return Promise.resolve()
+    .then(() => axios.get(url))
+    .then(resp => {
+      return resp.data
+    })
+}
+
 function cvjson_fetchElements (batch, label, pageNo, limit) {
   const { query } = batch
-  const rankedUrl = `${ROOT_URL}/batch?q=${query}&rank_by=${label}&limit=${limit}&page=${pageNo}`
+  const url = `${ROOT_URL}/batch?q=${query}&rank_by=${label}&limit=${limit}&page=${pageNo}`
 
   return Promise.resolve()
-    .then(() => axios.get(rankedUrl))
+    .then(() => axios.get(url))
     .then(resp => {
       return resp.data
         .map(el => ({ element_id: el.id, ...el.media["preds.json"] }))
@@ -50,6 +59,7 @@ function cvjson_fetchElements (batch, label, pageNo, limit) {
 export default {
   fetchBatches: () => axios.get(`${ROOT_URL}/elementmap`),
   fetchElement: elementId => axios.get(`${ROOT_URL}/element?id=${elementId}`),
+  fetchAttribute,
   cvjson_fetchElements,
   cvjson_fetchRankings,
 }

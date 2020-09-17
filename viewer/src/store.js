@@ -23,6 +23,17 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    [types.FETCH_ATTRIBUTE_ATTEMPT] (state) {
+      state.fetching = true
+    },
+    [types.FETCH_ATTRIBUTE_ERROR] (state, msg) {
+      state.fetching = false
+      state.error = msg
+    },
+    [types.FETCH_ATTRIBUTE] (state, vl) {
+      state.batch[vl.attribute] = vl.value
+      state.fetching = false
+    },
     [types.FETCH_BATCHES_ATTEMPT] (state) {
       state.fetching = true
     },
@@ -31,6 +42,7 @@ export default new Vuex.Store({
       state.fetching = false
     },
     [types.FETCH_BATCHES_ERROR] (state, msg) {
+      state.fetching = false
       state.error = msg
     },
     [types.SET_ACTIVE_BATCH] (state, batch) {
@@ -70,6 +82,16 @@ export default new Vuex.Store({
         })
         .catch(err => {
           commit(types.FETCH_BATCHES_ERROR, err.message)
+        })
+    },
+    fetchAttribute({ commit, state }, data) {
+      commit(types.FETCH_ATTRIBUTE_ATTEMPT)
+      api.fetchAttribute(data.attribute, data.query)
+        .then(result => {
+          commit(types.FETCH_ATTRIBUTE, { attribute: data.attribute, value: result })
+        })
+        .catch(err => {
+          commit(types.FETCH_ATTRIBUTE_ERROR, err.message)
         })
     },
     cvjson_fetchElements ({ commit, state }, { batch, pageNo }) {
