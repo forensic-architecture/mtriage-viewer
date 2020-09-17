@@ -30,6 +30,13 @@ function cvjson_fetchRankings (batch) {
     })
 }
 
+function fetchFromBatch (query, elements) {
+  console.log(elements)
+  alert(query)
+  // TODO: this is where we are.
+  return Promise.reject(Error("TODO"))
+}
+
 function fetchAttribute (attr, query) {
   const url = `${ROOT_URL}/batch_attribute?a=${attr}&q=${query}`
   return Promise.resolve()
@@ -59,6 +66,7 @@ function cvjson_fetchElements (batch, label, pageNo, limit) {
 export default {
   fetchBatches: () => axios.get(`${ROOT_URL}/elementmap`),
   fetchElement: elementId => axios.get(`${ROOT_URL}/element?id=${elementId}`),
+  fetchFromBatch,
   fetchAttribute,
   cvjson_fetchElements,
   cvjson_fetchRankings,

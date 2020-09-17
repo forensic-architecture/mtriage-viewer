@@ -1,25 +1,13 @@
 <template>
   <div>
-    <h1>Showing matches for: {{ label }}</h1>
     <v-container fluid>
-      <v-row>
-        <v-col>
+      <v-row md="12">
+        <v-col offset-md="4" md="4" align="center">
           <v-select
             v-model="storeLabel"
             color="black"
-            :items="labels"
+            :items="availableLabels"
             label="Label"
-          />
-        </v-col>
-        <v-col>
-          <v-slider
-            color="black"
-            v-model="storeThreshold"
-            class="align-center"
-            :step="0.05"
-            :max="1"
-            :min="0"
-            hide-details
           />
         </v-col>
       </v-row>
@@ -29,7 +17,7 @@
     </div>
     <Graph :elements="elements" :label="label" :threshold="threshold" />
     <Loading v-if="!!fetching" />
-    <div v-show='!isDefault && !fetching' class='button' @click='nextPage'>Load more</div>
+    <div v-show='!fetching && pageNo > 0' class='button' @click='refetchElements'>Load more</div>
     <div v-if="!!error" class="flexc">
       <h1>A network connection occurred. Make sure you are correctly configured with a running backend.</h1>
     </div>
@@ -40,6 +28,8 @@
   import Loading from '../components/Loading.vue'
   import Graph from './Graph.vue'
   import { mapState, mapActions } from 'vuex'
+
+  const PER_PAGE = 10
 
   export default {
     name: 'CvJsonViewer',
@@ -56,39 +46,41 @@
     },
     methods: {
       ...mapActions([
-        'cvjson_fetchElements',
+        'fetchFromBatch',
         'fetchAttribute'
       ]),
-      nextPage() {
+      refetchElements() {
+// TODO: add logic working out which elements have already been fetched, and don't need to be done again.
+        const {batch, pageNo, ranking, label} = this
+        const els = ranking[label]
+        this.pageNo += 1
+        const startIdx = pageNo * PER_PAGE
+        const endIdx = Math.min(els.length, (pageNo + 1) * PER_PAGE)
+        const elements = els.slice(startIdx, endIdx)
         const me = this
-        const { batch, pageNo } = this
-        this.cvjson_fetchElements({ batch, pageNo })
+        this.fetchFromBatch({ q: batch.query, elements })
           .then(() => {
             me.pageNo += 1;
-            console.log('Page number now '+me.pageNo+'.')
           })
-      },
-      refetchElements(label) {
-        const {batch, pageNo} = this
-        const me = this
-        this.cvjson_fetchElements({ batch: { ...batch, label }, pageNo })
-        .then(() => {
-          me.pageNo += 1;
-        })
-
       }
     },
     computed: {
-      isDefault() {
-        return this.elements.length === 0 && !this.fetching
-      },
       ...mapState({
         fetching: 'fetching',
         elements: 'activeElements',
         error: 'error',
         threshold: state => state.batch.threshold,
         label: state => state.batch.label,
+        ranking: state => state.batch.ranking
       }),
+
+      availableLabels() {
+        const av = this.ranking ? Object.keys(this.ranking) : []
+        return this.labels.filter(l => av.includes(l))
+      },
+      isDefault() {
+        return this.elements.length === 0 && !this.fetching
+      },
       storeThreshold: {
         get() {
           return this.$store.state.batch.threshold
@@ -102,8 +94,8 @@
           return this.$store.state.batch.label
         },
         set(value) {
-          this.refetchElements(value)
           this.$store.commit('UPDATE_LABEL', value)
+          this.refetchElements()
         },
       },
     },
@@ -117,13 +109,6 @@
 
 <style lang="scss">
   $primary-color: #e2e2e2;
-
-  h1 {
-    padding-bottom: 30px;
-  }
-
-  .control-panel {
-  }
 
   .table {
     display: flex;
