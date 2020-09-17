@@ -18,7 +18,7 @@ export default new Vuex.Store({
     activeLabels: ["tank", "pistol", "rifle", "jeep", "missile"],
     activeElements: [],
     batch: {
-      label: "missile",
+      label: null,
       threshold: 0
     }
   },

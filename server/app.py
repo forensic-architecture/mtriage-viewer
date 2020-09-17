@@ -237,37 +237,46 @@ def elementmap():
     return jsonify([x.serialize() for x in mp["batches"]])
 
 
-@app.route("/batch")
+@app.route("/batch", methods=["GET", "POST"])
 def batch():
+    if request.method == "GET":
+        mp = load_map()
+        arg_query = request.args.get("q")
+        arg_element = request.args.get("el")
+
+        arg_limit = request.args.get("limit")
+        arg_limit = 10 if arg_limit is None else int(arg_limit)
+
+        arg_page = request.args.get("page")
+        arg_page = 0 if arg_page is None else int(arg_page)
+
+        rank_by = request.args.get("rank_by")
+        if rank_by is None:
+            rank_by = "tank"
+
+        if not arg_query:
+            return jsonify([])
+
+        matching = [b for b in mp["batches"] if b.query.strip("/") == arg_query.strip("/")]
+
+        if len(matching) != 1:
+            return jsonify({})
+
+        batch = matching[0]
+
+        if arg_element is not None:
+            return jsonify(batch.get_element(arg_element))
+
+        return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=rank_by))
+    else: # POST
+        return jsonify({ "ciao": "bella" })
+
+
+
+@app.route("/rankings")
+def ranking():
     mp = load_map()
-    arg_query = request.args.get("q")
-    arg_element = request.args.get("el")
-
-    arg_limit = request.args.get("limit")
-    arg_limit = 10 if arg_limit is None else int(arg_limit)
-
-    arg_page = request.args.get("page")
-    arg_page = 0 if arg_page is None else int(arg_page)
-
-    rank_by = request.args.get("rank_by")
-    if rank_by is None:
-        rank_by = "tank"
-
-    if not arg_query:
-        return jsonify([])
-
-    matching = [b for b in mp["batches"] if b.query.strip("/") == arg_query.strip("/")]
-
-    if len(matching) != 1:
-        return jsonify({})
-
-    batch = matching[0]
-
-    if arg_element is not None:
-        return jsonify(batch.get_element(arg_element))
-
-    return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=rank_by))
-
+    return jsonify([x.ranking for x in mp["batches"]])
 
 if __name__ == "__main__":
     mp = index(ROOT, STORAGE_TYPE)

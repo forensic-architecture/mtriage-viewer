@@ -24,9 +24,12 @@
         </v-col>
       </v-row>
     </v-container>
+    <div v-if="isDefault">
+      Select a label above to begin.
+    </div>
     <Graph :elements="elements" :label="label" :threshold="threshold" />
     <Loading v-if="!!fetching" />
-    <div v-show='!fetching' class='button' @click='nextPage'>Load more</div>
+    <div v-show='!isDefault && !fetching' class='button' @click='nextPage'>Load more</div>
     <div v-if="!!error" class="flexc">
       <h1>A network connection occurred. Make sure you are correctly configured with a running backend.</h1>
     </div>
@@ -63,10 +66,21 @@
             me.pageNo += 1;
             console.log('Page number now '+me.pageNo+'.')
           })
+      },
+      refetchElements(label) {
+        const {batch, pageNo} = this
+        const me = this
+        this.cvjson_fetchElements({ batch: { ...batch, label }, pageNo })
+        .then(() => {
+          me.pageNo += 1;
+        })
 
       }
     },
     computed: {
+      isDefault() {
+        return this.elements.length === 0 && !this.fetching
+      },
       ...mapState({
         fetching: 'fetching',
         elements: 'activeElements',
@@ -87,19 +101,15 @@
           return this.$store.state.batch.label
         },
         set(value) {
+          alert('we here')
+          this.refetchElements(value)
           this.$store.commit('UPDATE_LABEL', value)
         },
       },
     },
     mounted: function () {
-      const { batch, pageNo } = this
-      const me = this
-      batch.label = this.storeLabel
-      this.cvjson_fetchElements({ batch, pageNo })
-        .then(() => {
-          me.pageNo += 1;
-          console.log('Page number now '+me.pageNo+'.')
-        })
+      const { batch } = this
+      this.batch.label = this.storeLabel
     }
   }
 </script>

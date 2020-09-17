@@ -1,5 +1,6 @@
 <template>
   <div class="graph-container">
+
     <VideoCell
       v-for="(video, key) in elements"
       v-if="!!video.webpage_url"
@@ -19,7 +20,6 @@
 </template>
 
 <script>
-  // import { rankByFrameCount } from '../lib/rank'
   import VideoCell from './VideoCell.vue'
 
   export default {
