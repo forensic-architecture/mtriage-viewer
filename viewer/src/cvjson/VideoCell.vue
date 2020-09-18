@@ -27,12 +27,6 @@
       <div class="detail-column">
         <div class="detail-row">
           <div class="text">
-            <h4>Rank</h4>
-            <div>{{ rankFmt }}</div>
-          </div>
-        </div>
-        <div class="detail-row">
-          <div class="text">
             <h4>Duration</h4>
             <div>{{ durationFmt }}</div>
           </div>
@@ -193,7 +187,6 @@ $open-anim: 0s ease-in;
     }
     .detail-column {
       flex: 1;
-      border-left: 1px $card-colour solid;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -201,7 +194,6 @@ $open-anim: 0s ease-in;
 
     .detail-row {
       flex: 1;
-      border-bottom: 1px $card-colour solid;
     }
   }
 }

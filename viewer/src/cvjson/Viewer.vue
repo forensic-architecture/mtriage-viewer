@@ -15,6 +15,12 @@
     <div v-if="isDefault">
       Select a label above to begin.
     </div>
+    <div class='intro' v-else>
+      Each cell below represents a video, its timeline running from left to right.<br/> Red frames indicate a classicfication that matches the label. The brighter the frame, the more confident the classification.<br/><b style="color:black;">Click on a cell to see general information about the video, or on a frame to go to that section of the original video</b>.
+    <h2 style="padding: .5em 0">NOTES OF USE</h2>
+    <div>The classifier used is directly applied from <a href="https://keras.io/api/applications/">Keras trained on ImageNet</a>. Because the ImageNet sample contains 1000 classes, each frame is classified into just 1 of those 1000 options. (Thus if a person is more prominent than a rifle, the result will likely be 'person' rather than 'rifle', even if the image clearly contains a rifle.) The accuracy of the classifier could easily be tuned to improve for specific objects.</div>
+
+    </div>
     <Graph :elements="elements" :label="label" :threshold="threshold" />
     <Loading v-if="!!fetching" />
     <div v-show='!fetching && pageNo > 0' class='button' @click='refetchElements'>Load more</div>
@@ -109,6 +115,13 @@
 
 <style lang="scss">
   $primary-color: #e2e2e2;
+
+  .intro {
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 20px;
+  }
 
   .table {
     display: flex;
