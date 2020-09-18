@@ -4,8 +4,9 @@
     <div id="body-container">
       <div class="container">
         <div class="content-case">
-          <BatchList v-if="!activeBatch" />
-          <ViewBatch v-else/>
+          <intro />
+          <batch-list v-if="!activeBatch" />
+          <view-batch v-else/>
         </div>
       </div>
     </div>
@@ -17,6 +18,7 @@ import { mapState } from 'vuex'
 import Header from './components/Header.vue'
 import BatchList from './components/BatchList.vue'
 import ViewBatch from './components/ViewBatch.vue'
+import Intro from './components/Intro.vue'
 
 export default {
   name: 'app',
@@ -26,6 +28,7 @@ export default {
   }),
   components: {
     Header,
+    Intro,
     BatchList,
     ViewBatch,
   }
@@ -36,6 +39,7 @@ export default {
 $primary-color: blue;
 $background-color: #f1f1f1;
 $card-colour: #1a1a1a;
+$fa-red: #ee4238;
 
 $break-small: 320px;
 $break-large: 1024px;
@@ -103,5 +107,11 @@ body {
 
 img {
   width: 4em;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+  border-bottom: 1px solid $fa-red;
 }
 </style>
