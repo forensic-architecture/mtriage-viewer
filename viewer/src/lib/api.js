@@ -31,10 +31,22 @@ function cvjson_fetchRankings (batch) {
 }
 
 function fetchFromBatch (query, elements) {
-  console.log(elements)
-  alert(query)
+  const url = `${ROOT_URL}/batch`
+  const data = { query, elements }
+  return Promise.resolve()
+    .then(() => axios({
+      method: 'post',
+      url,
+      data,
+    }))
+    .then(res => res.data
+      .map(el => ({
+        element_id: el.id,
+        ...el.media["preds.json"]
+      }))
+    )
   // TODO: this is where we are.
-  return Promise.reject(Error("TODO"))
+  // return Promise.reject(Error("TODO"))
 }
 
 function fetchAttribute (attr, query) {

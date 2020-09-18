@@ -31,8 +31,9 @@ export default new Vuex.Store({
       state.fetching = false
       state.error = msg
     },
-    [types.FETCH_FROM_BATCH] (state, results) {
-      console.log(results)
+    [types.FETCH_FROM_BATCH] (state, elements) {
+      state.activeElements = [...state.activeElements, ...elements]
+      state.fetching = false
     },
     [types.FETCH_ATTRIBUTE_ATTEMPT] (state) {
       state.fetching = true
@@ -65,24 +66,6 @@ export default new Vuex.Store({
     [types.UPDATE_LABEL] (state, label) {
       state.batch.label = label
     },
-
-    /* CvJson */
-    [types.FETCH_NEXT_ELEMENTS_ATTEMPT] (state) {
-      state.fetching = true
-    },
-    [types.FETCH_NEXT_ELEMENTS] (state, elements) {
-      // state.activeElements = state.activeElements.concat(elements)
-      state.activeElements = [...state.activeElements, ...elements]
-      state.fetching = false
-    },
-    [types.FETCH_NEXT_ELEMENTS_ERROR] (state, msg) {
-      state.error = msg
-    },
-    [types.FETCH_RANKING] (state, ranking) {
-      state.ranking = ranking
-      state.fetching = false
-    }
-
   },
   actions: {
     fetchBatches ({ commit }, pages) {
@@ -114,18 +97,6 @@ export default new Vuex.Store({
         .catch(err => {
           commit(types.FETCH_ATTRIBUTE_ERROR, err.message)
         })
-    },
-    cvjson_fetchElements ({ commit }, { batch, pageNo }) {
-      commit(types.FETCH_NEXT_ELEMENTS_ATTEMPT)
-      const page = pageNo !== null ? pageNo : 0
-      return api.cvjson_fetchElements(batch, batch.label, page, 10)
-        .then(result => {
-          commit(types.FETCH_NEXT_ELEMENTS, result)
-        })
-        // .catch(err => {
-        //   console.log(err.message)
-        //   commit(types.FETCH_NEXT_ELEMENTS_ERROR, err.message)
-        // })
     },
   }
 })

@@ -9,13 +9,16 @@
         top
         :open-delay="120"
         :key="index"
-        class="on"
       >
+        <template v-slot:activator="{ on, attrs }">
         <span
-          slot="activator"
+          class="on"
+          v-on="on"
+          v-bind="attrs"
           v-on:click="openFrame(index)"
           :style="getFrameColor(index)"
         />
+        </template>
         <span>{{ timeFmt(index) }}</span><br>
         <span>{{ scoreFmt(index)}}</span>
       </v-tooltip>
@@ -44,7 +47,10 @@ export default {
   methods: {
     isOn: function(idx) {
       const _idx = this.frames.indexOf(idx)
-      return _idx > -1 && this.scores[_idx] > this.threshold
+      if (_idx > -1 && this.scores[_idx] > this.threshold) {
+        return true
+      }
+      return false
     },
     openFrame: function(idx) {
       window.open(`https://youtu.be/${this.video_id}?t=${idx}`, '_blank')
@@ -54,11 +60,13 @@ export default {
     },
     scoreFmt: function(idx) {
       const _idx = this.frames.indexOf(idx)
-      return `${this.scores[_idx]}%`
+      const score = this.scores[_idx] * 100
+      return `${score.toFixed(2)}%`
     },
     getFrameColor: function(idx) {
       const _idx = this.frames.indexOf(idx)
-      return `background-color: rgb(${100 + 155 * (this.scores[_idx] / 40)}, 0, 0)`
+      const score = this.scores[_idx] * 100
+      return `background-color: rgb(${100 + 155 * (score / 40)}, 0, 0)`
     },
   },
 }
@@ -78,6 +86,8 @@ $frame-color: #cc1616;
   display: flex;
   flex: 1;
   .on {
+    /* border-left: 0.5px solid blue; */
+    min-width: 5px;
     display: flex;
     flex: 1;
     &:hover {

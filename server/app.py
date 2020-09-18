@@ -234,6 +234,12 @@ def index(root: str, storage_type: StorageType):
     }
 
 
+def batch_from_query(batches, query):
+    if not query: return None
+    matching = [b for b in batches if b.query.strip("/") == query.strip("/")]
+    if len(matching) != 1: return None
+    return matching[0]
+
 @app.route("/elementmap")
 def elementmap():
     mp = load_map()
@@ -242,9 +248,12 @@ def elementmap():
 
 @app.route("/batch", methods=["GET", "POST"])
 def batch():
+    mp = load_map()
+    batches = mp["batches"]
+
     if request.method == "GET":
-        mp = load_map()
         arg_query = request.args.get("q")
+        batch = batch_from_query(batches, arg_query)
         arg_element = request.args.get("el")
 
         arg_limit = request.args.get("limit")
@@ -257,22 +266,16 @@ def batch():
         if rank_by is None:
             rank_by = "tank"
 
-        if not arg_query:
-            return jsonify([])
-
-        matching = [b for b in mp["batches"] if b.query.strip("/") == arg_query.strip("/")]
-
-        if len(matching) != 1:
-            return jsonify({})
-
-        batch = matching[0]
-
         if arg_element is not None:
             return jsonify(batch.get_element(arg_element))
 
         return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=rank_by))
     else: # POST
-        return jsonify({ "ciao": "bella" })
+        data = request.json
+        q = data.get("query")
+        elements = data.get("elements")
+        batch = batch_from_query(batches, q)
+        return jsonify([ batch.get_element(el) for el in elements ])
 
 
 @app.route("/batch_attribute")

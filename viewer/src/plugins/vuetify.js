@@ -9,7 +9,7 @@ const opts = {
     themes: {
       light: {
         primary: '#ee4238',
-        secondary: 'black',
+        secondary: '#FFB6C1',
         anchor: '#2c3e50'
       }
     }
