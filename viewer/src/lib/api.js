@@ -1,23 +1,8 @@
 import axios from 'axios'
 
-const ROOT_URL = 'http://localhost:5000'
+console.log(process.env)
 
-// const getReq = {
-//   headers: {
-//     'Content-Type': 'application/json',
-//     'Access-Control-Allow-Origin': '*'
-//   },
-//   crossdomain: true,
-//   method: 'get'
-// }
-//
-// function get (url) {
-//   return axios({
-//     ...getReq,
-//     url
-//   })
-// }
-
+const ROOT_URL = process.env.VUE_APP_SERVER_URL
 
 function cvjson_fetchRankings (batch) {
   const { query } = batch
