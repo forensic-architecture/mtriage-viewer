@@ -4,3 +4,5 @@ tags.temp
 
 server/mtbatches/
 server/__pycache__
+
+viewer/.env
