@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-console.log(process.env)
-
 const ROOT_URL = process.env.VUE_APP_SERVER_URL
 
 function cvjson_fetchRankings (batch) {
