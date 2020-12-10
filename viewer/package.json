@@ -18,6 +18,7 @@
     "@vue/cli": "^4.5.6",
     "@vue/cli-plugin-babel": "^4.5.6",
     "@vue/cli-service": "^4.5.6",
+    "basscss": "^8.1.0",
     "sass": "^1.26.10",
     "sass-loader": "^10.0.2",
     "vue-template-compiler": "^2.6.12"

@@ -1,11 +1,11 @@
 <template>
   <div class="flex-fill flex-center">
-    <v-progress-circular
+    <!-- <v-progress-circular
       color="rgb(204, 22, 22)"
       :size="70"
       :width="7"
       indeterminate
-    />
+    /> -->
   </div>
 </template>
 

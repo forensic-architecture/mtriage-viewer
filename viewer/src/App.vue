@@ -1,24 +1,27 @@
 <template>
-  <v-app id="app">
+  <div id="app" class="clearfix m2">
     <Header :version="version" />
+    <About />
     <div id="body-container">
       <div class="container">
         <div class="content-case">
-          <intro />
+          <!-- <intro /> -->
           <batch-list v-if="!activeBatch" />
           <view-batch v-else/>
         </div>
       </div>
     </div>
-  </v-app>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import About from './components/About.vue'
 import Header from './components/Header.vue'
 import BatchList from './components/BatchList.vue'
 import ViewBatch from './components/ViewBatch.vue'
 import Intro from './components/Intro.vue'
+import "basscss/css/basscss.min.css";
 
 export default {
   name: 'app',
@@ -28,6 +31,7 @@ export default {
   }),
   components: {
     Header,
+    About,
     Intro,
     BatchList,
     ViewBatch,
@@ -58,19 +62,19 @@ $break-large: 1024px;
 
 body {
   margin: 0px;
+  // background-color: $background-color;
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
   display: flex;
   flex-direction: column;
-  margin: 0px;
-  background-color: $background-color;
+  // margin-top: 60px;
+  // margin: 0px;
 }
 
 #body-container {
