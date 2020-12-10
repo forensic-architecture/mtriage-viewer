@@ -1,33 +1,30 @@
 <template>
-  <div id="app" class="clearfix m2">
+  <v-app id="app" class="clearfix m2 mx3">
     <Header :version="version" />
-    <About />
-    <div id="body-container">
-      <div class="container">
-        <div class="content-case">
-          <!-- <intro /> -->
-          <batch-list v-if="!activeBatch" />
-          <view-batch v-else/>
-        </div>
+    <div class="main-app flex flex-column justify-between">
+      <About />
+      <div class="">
+        <batch-list v-if="!activeBatch" />
+        <view-batch v-else />
       </div>
     </div>
-  </div>
+  </v-app>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import About from './components/About.vue'
-import Header from './components/Header.vue'
-import BatchList from './components/BatchList.vue'
-import ViewBatch from './components/ViewBatch.vue'
-import Intro from './components/Intro.vue'
+import { mapState } from "vuex";
+import About from "./components/About.vue";
+import Header from "./components/Header.vue";
+import BatchList from "./components/BatchList.vue";
+import ViewBatch from "./components/ViewBatch.vue";
+import Intro from "./components/Intro.vue";
 import "basscss/css/basscss.min.css";
 
 export default {
-  name: 'app',
+  name: "app",
   computed: mapState({
-    version: 'version',
-    activeBatch: state => state.activeBatch,
+    version: "version",
+    activeBatch: (state) => state.activeBatch,
   }),
   components: {
     Header,
@@ -35,8 +32,8 @@ export default {
     Intro,
     BatchList,
     ViewBatch,
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
@@ -50,13 +47,17 @@ $break-large: 1024px;
 
 @mixin respond-to($media) {
   @if $media == handhelds {
-    @media only screen and (max-width: $break-small) { @content; }
-  }
-  @else if $media == medium-screens {
-    @media only screen and (min-width: $break-small + 1) and (max-width: $break-large - 1) { @content; }
-  }
-  @else if $media == wide-screens {
-    @media only screen and (min-width: $break-large) { @content; }
+    @media only screen and (max-width: $break-small) {
+      @content;
+    }
+  } @else if $media == medium-screens {
+    @media only screen and (min-width: $break-small + 1) and (max-width: $break-large - 1) {
+      @content;
+    }
+  } @else if $media == wide-screens {
+    @media only screen and (min-width: $break-large) {
+      @content;
+    }
   }
 }
 
@@ -66,7 +67,7 @@ body {
 }
 
 #app {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -75,6 +76,10 @@ body {
   flex-direction: column;
   // margin-top: 60px;
   // margin: 0px;
+}
+
+.main-app {
+  min-height: 600px;
 }
 
 #body-container {

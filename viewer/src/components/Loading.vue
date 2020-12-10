@@ -11,11 +11,11 @@
 
 <script>
 export default {
-  name: 'Loading',
+  name: "Loading",
   props: {
-    version: String
-  }
-}
+    version: String,
+  },
+};
 </script>
 
 <style lang="scss">

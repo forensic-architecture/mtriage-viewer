@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 
-import CvJsonViewer from '../cvjson/Viewer.vue'
+import CvJsonViewer from "../cvjson/Viewer.vue";
 
 export default {
   components: {
@@ -13,13 +13,13 @@ export default {
   },
   computed: {
     ...mapState({
-      batch: state => state.activeBatch,
-      labels: state => state.activeLabels,
+      batch: (state) => state.activeBatch,
+      labels: (state) => state.activeLabels,
     }),
     viewerComp: function() {
-      const etypePrefix = !!this.batch ? this.batch.etype : "any"
-      return `${etypePrefix}Viewer`
-    }
-  }
-}
+      const etypePrefix = !!this.batch ? this.batch.etype : "any";
+      return `${etypePrefix}Viewer`;
+    },
+  },
+};
 </script>

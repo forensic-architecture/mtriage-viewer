@@ -1,17 +1,33 @@
 <template>
-  <div>
-    <h1 class="batch-header">Available Batches</h1>
-
-    <Loading v-if="fetching" />
-    <div v-if="error" class="flexc">
-      <h1>A network connection error occurred. Make sure you are correctly configured.</h1>
-    </div>
-
-    <div v-for="batch in elementmap">
-      <div class="batch-row" v-if="batch.elements !== null" @click="SET_ACTIVE_BATCH(batch)">
-        <h2>{{batch.query}}</h2>
-        <div class="table">
-          <BatchPreview :batch="batch" />
+  <div class="flex flex-row flex-wrap">
+    <div class="flex col-12 h1 bold my3">Batches</div>
+    <div class="flex flex-wrap col-12">
+      <Loading v-if="fetching" />
+      <div v-if="error" class="flexc">
+        <h1>
+          A network connection error occurred. Make sure you are correctly
+          configured.
+        </h1>
+      </div>
+      <div
+        class="flex lg-col-4 md-col-6 col-12 batch-row clearfix px2 py2"
+        v-for="(batch, idx) in elementmap"
+        :key="batch.query"
+      >
+        <div
+          class="flex flex-row flex-wrap col-12 left-align"
+          v-if="batch.elements !== null"
+          @click="SET_ACTIVE_BATCH(batch)"
+        >
+          <div class="lg-col-2 sm-col-12 h2">{{ idx + 1 }}/</div>
+          <div class="flex flex-column align-bottom">
+            <div class="h3 bold">{{ batch.query.replace(/\//g, "") }}</div>
+            <div class="mt2">{{ batch.elements.length }} elements</div>
+            <div class="">Generated on: 01.12.2020</div>
+            <div class="mt2">
+              <BatchPreview :batch="batch" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -19,56 +35,49 @@
 </template>
 
 <script>
-import Loading from './Loading.vue'
-import { mapState, mapActions, mapMutations } from 'vuex'
-import BatchPreview from './BatchPreview.vue'
+import Loading from "./Loading.vue";
+import { mapState, mapActions, mapMutations } from "vuex";
+import BatchPreview from "./BatchPreview.vue";
 
 export default {
-  name: 'BatchList',
+  name: "BatchList",
   components: {
     Loading,
-    BatchPreview
+    BatchPreview,
   },
   methods: {
-    ...mapActions(['fetchBatches']),
-    ...mapMutations(['SET_ACTIVE_BATCH']),
+    ...mapActions(["fetchBatches"]),
+    ...mapMutations(["SET_ACTIVE_BATCH"]),
   },
   computed: {
     ...mapState({
-      fetching: state => state.fetching,
-      elementmap: state => state.elementmap,
-      error: state => state.error
-    })
+      fetching: (state) => state.fetching,
+      elementmap: (state) => state.elementmap,
+      error: (state) => state.error,
+    }),
   },
-  mounted: function () {
-    this.fetchBatches()
-  }
-}
+  mounted: function() {
+    this.fetchBatches();
+  },
+};
 </script>
 
 <style lang="scss">
 $primary-color: #e2e2e2;
 
-h1, h2 {
+h1,
+h2 {
   text-align: left;
 }
 
-.batch-header {
-  margin-bottom: 20px;
-}
-
 .batch-row {
-  border: 1px solid black;
-  padding: 5px 15px;
-  &:hover {
-    cursor: pointer;
-    background-color: black;
-    color: white;
-  }
-}
+  cursor: pointer;
 
-hr {
-  margin: 15px 0;
+  &:hover {
+    border: 1px solid black;
+    border-left-width: 0px;
+    border-right-width: 0px;
+  }
 }
 
 .table {
@@ -86,6 +95,4 @@ hr {
 .hidden {
   display: none;
 }
-
-
 </style>
