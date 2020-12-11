@@ -1,8 +1,8 @@
 <template>
   <v-app id="app" class="clearfix m2 mx3">
     <Header :version="version" />
-    <div class="main-app flex flex-column justify-between">
-      <About />
+    <div class="main-app flex flex-column justify-between left-align">
+      <About v-if="!activeBatch" />
       <div class="">
         <batch-list v-if="!activeBatch" />
         <view-batch v-else />
@@ -122,5 +122,10 @@ a {
   color: black;
   text-decoration: none;
   border-bottom: 1px solid $fa-red;
+
+  &:hover {
+    background-color: $fa-red;
+    color: white;
+  }
 }
 </style>

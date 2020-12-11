@@ -1,9 +1,14 @@
 <template>
-  <div class="flex flex-row">
-    <label for="label-select">Label</label>
-    <select name="ml-labels" id="label-select" v-model="storeLabel">
-      <option v-for="l in availableLabels" :key="l">{{ l }}</option>
-    </select>
+  <div class="flex flex-row flex-wrap">
+    <div class="flex col-12 bold">
+      <div v-if="isDefault">
+        Select a label above to begin.
+      </div>
+      <label for="label-select">Label</label>
+      <select name="ml-labels" id="label-select" v-model="storeLabel">
+        <option v-for="l in availableLabels" :key="l">{{ l }}</option>
+      </select>
+    </div>
     <!-- <v-container fluid>
       <v-row md="12">
         <v-col offset-md="4" md="4" align="center">
@@ -16,44 +21,47 @@
         </v-col>
       </v-row>
     </v-container> -->
-    <div v-if="isDefault">
-      Select a label above to begin.
-    </div>
-    <div class="intro" v-else>
-      Each cell below represents a video, its timeline running from left to
-      right.<br />
-      Red frames indicate a classicfication that matches the label. The brighter
-      the frame, the more confident the classification.<br /><b
-        style="color:black;"
-        >Click on a cell to see general information about the video, or on a
-        frame to go to that section of the original video</b
-      >.
-      <h2 style="padding: .5em 0">NOTES OF USE</h2>
-      <div>
-        The classifier used is directly applied from
-        <a href="https://keras.io/api/applications/"
-          >Keras trained on ImageNet</a
-        >. Because the ImageNet sample contains 1000 classes, each frame is
-        classified into just 1 of those 1000 options. (Thus if a person is more
-        prominent than a rifle, the result will likely be 'person' rather than
-        'rifle', even if the image clearly contains a rifle.) The accuracy of
-        the classifier could easily be tuned to improve for specific objects.
+    <div class="flex flex-column col-12">
+      <div class="lg-col-6 my3">
+        <p>
+          Each cell below represents a video, its timeline running from left to
+          right.
+        </p>
+        <p>
+          Red frames indicate a classification that matches the label. The
+          brighter the frame, the more confident the classification.
+        </p>
+        <p>
+          The classifier used is directly applied from
+          <a href="https://keras.io/api/applications/"
+            >Keras trained on ImageNet</a
+          >. Because the ImageNet sample contains 1000 classes, each frame is
+          classified into just 1 of those 1000 options. (Thus if a person is
+          more prominent than a rifle, the result will likely be 'person' rather
+          than 'rifle', even if the image clearly contains a rifle.) The
+          accuracy of the classifier could easily be tuned to improve for
+          specific objects.
+        </p>
+        <p class="bold">
+          Click on a cell to see general information about the video, or on a
+          frame to go to that section of the original video.
+        </p>
       </div>
-    </div>
-    <Graph :elements="elements" :label="label" :threshold="threshold" />
-    <Loading v-if="!!fetching" />
-    <div
-      v-show="!fetching && pageNo > 0"
-      class="button"
-      @click="refetchElements"
-    >
-      Load more
-    </div>
-    <div v-if="!!error" class="flexc">
-      <h1>
-        A network connection occurred. Make sure you are correctly configured
-        with a running backend.
-      </h1>
+      <Graph :elements="elements" :label="label" :threshold="threshold" />
+      <Loading v-if="!!fetching" />
+      <div
+        v-show="!fetching && pageNo > 0"
+        class="button"
+        @click="refetchElements"
+      >
+        Load more
+      </div>
+      <div v-if="!!error" class="flexc">
+        <h1>
+          A network connection occurred. Make sure you are correctly configured
+          with a running backend.
+        </h1>
+      </div>
     </div>
   </div>
 </template>
@@ -140,26 +148,26 @@ export default {
 <style lang="scss">
 $primary-color: #e2e2e2;
 
-.intro {
-  text-align: left;
-  max-width: 600px;
-  margin: 0 auto;
-  padding-bottom: 20px;
-}
+// .intro {
+//   text-align: left;
+//   max-width: 600px;
+//   margin: 0 auto;
+//   padding-bottom: 20px;
+// }
 
-.table {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  flex: 1;
-  min-height: 100%;
-}
+// .table {
+//   display: flex;
+//   justify-content: flex-start;
+//   flex-direction: column;
+//   flex: 1;
+//   min-height: 100%;
+// }
 
-.graph-container {
-  text-align: left;
-}
+// .graph-container {
+//   text-align: left;
+// }
 
-.hidden {
-  display: none;
-}
+// .hidden {
+//   display: none;
+// }
 </style>
