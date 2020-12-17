@@ -21,6 +21,7 @@
     "basscss": "^8.1.0",
     "sass": "^1.26.10",
     "sass-loader": "^10.0.2",
+    "vue-router": "^3.4.9",
     "vue-template-compiler": "^2.6.12"
   },
   "postcss": {

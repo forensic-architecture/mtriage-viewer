@@ -1,0 +1,8 @@
+:root {
+  --primary-color: blue;
+  --background-color: #f1f1f1;
+  --card-colour: #1a1a1a;
+  --fa-red: #ee4238;
+  --break-small: 320px;
+  --break-large: 1024px;
+}

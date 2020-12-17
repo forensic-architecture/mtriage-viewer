@@ -1,23 +1,25 @@
 <template>
-  <v-app id="app" class="clearfix m2 mx3">
+  <v-app
+    id="app"
+    class="clearfix m2 mx3 m-auto flex flex-column justify-between left-align"
+  >
     <Header :version="version" />
-    <div class="main-app flex flex-column justify-between left-align">
-      <About v-if="!activeBatch" />
-      <div class="">
-        <batch-list v-if="!activeBatch" />
-        <view-batch v-else />
-      </div>
-    </div>
+    <!-- <div class="main-app flex flex-column justify-between left-align"> -->
+    <About />
+    <router-view />
+    <!-- <batch-list v-if="!activeBatch" />
+    <view-batch v-else /> -->
+    <!-- </div> -->
   </v-app>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import About from "./components/About.vue";
-import Header from "./components/Header.vue";
-import BatchList from "./components/BatchList.vue";
-import ViewBatch from "./components/ViewBatch.vue";
-import Intro from "./components/Intro.vue";
+import About from "@/components/About.vue";
+import Header from "@/components/Header.vue";
+import BatchList from "@/components/BatchList.vue";
+import ViewBatch from "@/components/ViewBatch.vue";
+import Intro from "@/components/Intro.vue";
 import "basscss/css/basscss.min.css";
 
 export default {
@@ -37,6 +39,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "css/app.css";
+
 $primary-color: blue;
 $background-color: #f1f1f1;
 $card-colour: #1a1a1a;
@@ -74,6 +78,7 @@ body {
   color: #2c3e50;
   display: flex;
   flex-direction: column;
+  max-width: 1280px;
   // margin-top: 60px;
   // margin: 0px;
 }

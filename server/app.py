@@ -12,11 +12,7 @@ from configparser import RawConfigParser
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-# TODO: pass as CLI args
-# ROOT =  "/Users/lachlankermode/code/_fa/mtriage/media/demo_official/3/Youtube/derived"
-# STORAGE_TYPE = StorageType.Local
-
-EM_STORE = "./mtbatches/map.pkl"
+EM_STORE = "./batches/map.pkl"
 
 app = Flask(__name__)
 CORS(app)
@@ -27,8 +23,14 @@ class StorageType(Enum):
     S3 = 2
 
 
-ROOT = "lk-iceland-personal"
-STORAGE_TYPE = StorageType.S3
+ROOT = "/Users/zac/Developer/Forensic Architecture/mtriage-viewer/server/batches/"
+STORAGE_TYPE = StorageType.Local
+# TODO: pass as CLI args
+# ROOT = "/Users/lachlankermode/code/_fa/mtriage/media/demo_official/3/Youtube/derived"
+# STORAGE_TYPE = StorageType.Local
+
+# ROOT = "lk-iceland-personal"
+# STORAGE_TYPE = StorageType.S3
 
 
 def read_etype(local_fp: Path) -> str:
@@ -219,7 +221,6 @@ def index(root: str, storage_type: StorageType):
     Runs on server start, indexing the Storage.
     ELEMENT_MAP is kept in memory from there.
     Specific batches are worked out dynamically.
-
     Simplistically, this function identifies all element batches inside the
     storage, reads the presumed etype, and presents an overview of available
     batches.
@@ -235,10 +236,13 @@ def index(root: str, storage_type: StorageType):
 
 
 def batch_from_query(batches, query):
-    if not query: return None
+    if not query:
+        return None
     matching = [b for b in batches if b.query.strip("/") == query.strip("/")]
-    if len(matching) != 1: return None
+    if len(matching) != 1:
+        return None
     return matching[0]
+
 
 @app.route("/elementmap")
 def elementmap():
@@ -269,13 +273,15 @@ def batch():
         if arg_element is not None:
             return jsonify(batch.get_element(arg_element))
 
-        return jsonify(batch.get_elements(page=arg_page, limit=arg_limit, rank_by=rank_by))
-    else: # POST
+        return jsonify(
+            batch.get_elements(page=arg_page, limit=arg_limit, rank_by=rank_by)
+        )
+    else:  # POST
         data = request.json
         q = data.get("query")
         elements = data.get("elements")
         batch = batch_from_query(batches, q)
-        return jsonify([ batch.get_element(el) for el in elements ])
+        return jsonify([batch.get_element(el) for el in elements])
 
 
 @app.route("/batch_attribute")
@@ -295,6 +301,7 @@ def batch_attribute():
         return jsonify(batch.get(attr))
     except:
         return jsonify(None)
+
 
 if __name__ == "__main__":
     mp = index(ROOT, STORAGE_TYPE)
