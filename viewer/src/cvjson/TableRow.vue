@@ -1,22 +1,32 @@
 <template>
-  <div class="flex flex-row border-bottom h6">
+  <div class="flex flex-row flex-wrap border-bottom h6">
     <div class="col-1">{{ video_id }}</div>
-    <div class="col-2">{{ title }}</div>
-    <div class="col-2">{{ description }}</div>
+    <div class="col-3">{{ title }}</div>
+    <div class="col-6">{{ description }}</div>
     <div class="col-1">{{ fmtDuration }}</div>
     <div class="col-1">{{ date }}</div>
-    <div class="col-6">Frame Graph</div>
+    <div class="col-12">
+      <SVGFrameMap
+        :video_id="video_id"
+        :length="duration"
+        :frames="frames"
+        :scores="scores"
+        :label="label"
+        :threshold="threshold"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import FrameMap from "./FrameMap.vue";
+import SVGFrameMap from "./SVGFrameMap";
 import { fmtMinSec, formatDate, yyyymmddParse } from "../lib/util";
 
 export default {
   name: "TableRow",
   components: {
-    FrameMap,
+    SVGFrameMap,
   },
   props: {
     video_id: String,

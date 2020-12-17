@@ -1,17 +1,17 @@
 <template>
   <div class="flex flex-column col-12">
+    <h3>Other Videos</h3>
     <div class="flex flex-row bold border-bottom h6">
       <div class="col-1">ID</div>
-      <div class="col-2">Title</div>
-      <div class="col-2">Description</div>
+      <div class="col-3">Title</div>
+      <div class="col-6">Description</div>
       <div class="col-1">Duration</div>
       <div class="col-1">Upload Date</div>
-      <div class="col-6">Frame Graph</div>
     </div>
 
     <TableRow
       v-for="(video, key) in elements"
-      :key="key"
+      :key="`${key}-${2}`"
       :video_id="video.webpage_url.split('=')[1]"
       :title="video.title"
       :uploadDate="video.upload_date"

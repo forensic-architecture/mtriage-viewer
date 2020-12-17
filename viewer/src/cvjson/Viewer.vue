@@ -1,18 +1,17 @@
 <template>
   <div class="flex flex-row flex-wrap left-align">
     <div class="flex col-12">
-      <div class="bold" v-if="isDefault">
-        Select a label above to begin.
+      <div class="mr1 bold">
+        Select a classification label below to begin:
       </div>
-    </div>
-    <div>
-      <div class="border">
+      <div class="px1 border-bottom">
         <!-- <label for="label-select">Label</label> -->
         <select name="ml-labels" id="label-select" v-model="storeLabel">
           <option v-for="l in availableLabels" :key="l">{{ l }}</option>
         </select>
       </div>
     </div>
+    <div></div>
     <!-- <v-container fluid>
       <v-row md="12">
         <v-col offset-md="4" md="4" align="center">
