@@ -2,7 +2,14 @@
   <div
     class="flex flex-row flex-wrap justify-between my2 pb1 bold border-bottom"
   >
-    <div class="flex lg-col-2 col-12">.mtbatch viewer</div>
+    <router-link
+      :to="{
+        name: 'root',
+      }"
+      tag="div"
+    >
+      <div class="flex lg-col-2 col-12">.mtbatch viewer</div>
+    </router-link>
     <div class="flex lg-col-2 col-12">v / {{ version }}</div>
     <div class="flex lg-col-2 col-12">
       available batches / 2

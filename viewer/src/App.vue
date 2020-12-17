@@ -5,7 +5,7 @@
   >
     <Header :version="version" />
     <!-- <div class="main-app flex flex-column justify-between left-align"> -->
-    <About />
+    <!-- <About /> -->
     <router-view />
     <!-- <batch-list v-if="!activeBatch" />
     <view-batch v-else /> -->
@@ -121,16 +121,5 @@ body {
 
 img {
   width: 4em;
-}
-
-a {
-  color: black;
-  text-decoration: none;
-  border-bottom: 1px solid $fa-red;
-
-  &:hover {
-    background-color: $fa-red;
-    color: white;
-  }
 }
 </style>

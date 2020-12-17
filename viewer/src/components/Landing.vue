@@ -1,17 +1,20 @@
 <template>
   <div>
-    <component :is="viewerComp" :batch="batch" :labels="labels"></component>
+    <About />
+    <BatchList />
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 
-import CvJsonViewer from "../cvjson/Viewer.vue";
+import About from "@/components/About";
+import BatchList from "@/components/BatchList";
 
 export default {
   components: {
-    CvJsonViewer,
+    About,
+    BatchList,
   },
   computed: {
     ...mapState({

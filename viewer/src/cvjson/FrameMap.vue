@@ -1,6 +1,13 @@
 <template>
-  <div v-if="this.frames !== null && this.scores !== null" class="frame-map">
-    <div class="keyframe" v-for="index in this.length">
+  <div
+    v-if="this.frames !== null && this.scores !== null"
+    class="flex flex-row"
+  >
+    <div
+      class="keyframe"
+      v-for="index in this.length"
+      v-bind:key="`frame-map-${index}`"
+    >
       <v-tooltip v-if="isOn(index)" top :open-delay="120" :key="index">
         <template v-slot:activator="{ on, attrs }">
           <span
@@ -64,12 +71,12 @@ export default {
 <style lang="scss">
 $frame-color: #cc1616;
 
-.frame-map {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  width: 100%;
-}
+// .frame-map {
+//   display: flex;
+//   flex: 1;
+//   flex-direction: row;
+//   width: 100%;
+// }
 
 .keyframe {
   display: flex;

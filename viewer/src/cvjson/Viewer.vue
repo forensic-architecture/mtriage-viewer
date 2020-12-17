@@ -1,13 +1,17 @@
 <template>
-  <div class="flex flex-row flex-wrap">
-    <div class="flex col-12 bold">
-      <div v-if="isDefault">
+  <div class="flex flex-row flex-wrap left-align">
+    <div class="flex col-12">
+      <div class="bold" v-if="isDefault">
         Select a label above to begin.
       </div>
-      <label for="label-select">Label</label>
-      <select name="ml-labels" id="label-select" v-model="storeLabel">
-        <option v-for="l in availableLabels" :key="l">{{ l }}</option>
-      </select>
+    </div>
+    <div>
+      <div class="border">
+        <!-- <label for="label-select">Label</label> -->
+        <select name="ml-labels" id="label-select" v-model="storeLabel">
+          <option v-for="l in availableLabels" :key="l">{{ l }}</option>
+        </select>
+      </div>
     </div>
     <!-- <v-container fluid>
       <v-row md="12">
@@ -114,7 +118,9 @@ export default {
 
     availableLabels() {
       const av = this.ranking ? Object.keys(this.ranking) : [];
-      return this.labels.filter((l) => av.includes(l));
+      const labels = this.labels.filter((l) => av.includes(l));
+      labels.unshift("");
+      return labels;
     },
     isDefault() {
       return this.elements.length === 0 && !this.fetching;

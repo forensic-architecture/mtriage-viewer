@@ -14,21 +14,29 @@
         v-for="(batch, idx) in elementmap"
         :key="batch.query"
       >
-        <div
-          class="flex flex-row flex-wrap col-12 left-align"
-          v-if="batch.elements !== null"
-          @click="SET_ACTIVE_BATCH(batch)"
+        <router-link
+          :to="{
+            name: 'batch',
+            params: { id: batch.query.replace(/\//g, '') },
+          }"
+          tag="div"
         >
-          <div class="lg-col-2 sm-col-12 h2">{{ idx + 1 }}/</div>
-          <div class="flex flex-column align-bottom">
-            <div class="h3 bold">{{ batch.query.replace(/\//g, "") }}</div>
-            <div class="mt2">{{ batch.elements.length }} elements</div>
-            <div class="">Generated on: 01.12.2020</div>
-            <div class="mt2">
-              <BatchPreview :batch="batch" />
+          <div
+            class="flex flex-row flex-wrap col-12 left-align"
+            v-if="batch.elements !== null"
+            @click="SET_ACTIVE_BATCH(batch)"
+          >
+            <div class="lg-col-2 sm-col-12 h2">{{ idx + 1 }}/</div>
+            <div class="flex flex-column align-bottom">
+              <div class="h3 bold">{{ batch.query.replace(/\//g, "") }}</div>
+              <div class="mt2">{{ batch.elements.length }} elements</div>
+              <div class="">Generated on: 01.12.2020</div>
+              <div class="mt2">
+                <BatchPreview :batch="batch" />
+              </div>
             </div>
           </div>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>

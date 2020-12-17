@@ -14,9 +14,9 @@ export default {
 </script>
 
 <style lang="scss">
-.invert-inside {
-  // color: white;
-  // background-color: black;
-  // padding: 5px 2.5px;
-}
+// .invert-inside {
+// color: white;
+// background-color: black;
+// padding: 5px 2.5px;
+// }
 </style>

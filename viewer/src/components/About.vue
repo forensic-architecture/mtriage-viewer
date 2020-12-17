@@ -1,5 +1,8 @@
 <template>
-  <div v-on:mouseleave="contentIdx = 0" class="flex flex-wrap flex-row my2">
+  <div
+    v-on:mouseleave="contentIdx = 0"
+    class="about-menu__container flex flex-wrap flex-row my2 content-start"
+  >
     <div class="flex lg-col-12">
       <div class="bold h2 mb2">Menu</div>
     </div>
@@ -24,6 +27,12 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+.about-menu__container {
+  min-height: 250px;
+}
+</style>
 
 <script>
 export default {

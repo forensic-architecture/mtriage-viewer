@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router";
 
-import BatchList from "@/components/BatchList";
+import Landing from "@/components/Landing";
+// import BatchList from "@/components/BatchList";
 import ViewBatch from "@/components/ViewBatch";
 
 Vue.use(Router);
@@ -11,16 +12,25 @@ const router = new Router({
   routes: [
     {
       path: "/",
-      name: "Root",
+      name: "root",
       components: {
-        default: BatchList,
+        // default: BatchList,
+        default: Landing,
       },
     },
     {
       path: "/batch/:id",
-      name: "Batch",
+      name: "batch",
       components: {
         default: ViewBatch,
+      },
+    },
+    {
+      path: "*",
+      redirect: (to) => {
+        return {
+          name: "root",
+        };
       },
     },
   ],
