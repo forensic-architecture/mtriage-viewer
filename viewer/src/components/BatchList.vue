@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row flex-wrap my3">
-    <div class="flex col-12 h1 bold">Batches</div>
+    <div class="flex col-12 h1 bold my1">Batches</div>
     <div class="flex flex-wrap col-12">
       <Loading v-if="fetching" />
       <div v-if="error" class="flexc">
@@ -84,7 +84,7 @@ h2 {
   &:hover {
     // background: #ddd;
     box-sizing: border;
-    border-top: 1px solid black;
+    border-bottom: 1px solid black;
     // border-left-width: 0px;
     // border-right-width: 0px;
   }

@@ -4,7 +4,7 @@
       <div class="mr1 bold">
         Select a classification label below to begin:
       </div>
-      <div class="px1 border-bottom">
+      <div class="px1">
         <!-- <label for="label-select">Label</label> -->
         <select name="ml-labels" id="label-select" v-model="storeLabel">
           <option v-for="l in availableLabels" :key="l">{{ l }}</option>
@@ -54,10 +54,10 @@
       <Loading v-if="!!fetching" />
       <div
         v-show="!fetching && pageNo > 0"
-        class="button"
+        class="button my2 bold"
         @click="refetchElements"
       >
-        Load more
+        Load more...
       </div>
       <div v-if="!!error" class="flexc">
         <h1>

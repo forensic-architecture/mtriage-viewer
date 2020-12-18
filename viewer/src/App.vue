@@ -1,5 +1,5 @@
 <template>
-  <v-app
+  <div
     id="app"
     class="clearfix m2 mx3 m-auto flex flex-column justify-between left-align"
   >
@@ -10,7 +10,7 @@
     <!-- <batch-list v-if="!activeBatch" />
     <view-batch v-else /> -->
     <!-- </div> -->
-  </v-app>
+  </div>
 </template>
 
 <script>

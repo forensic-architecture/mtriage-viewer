@@ -34,7 +34,7 @@ export default {
       const svg = select(this.$vnode.elm)
         .append("svg")
         .attr("width", `100%`)
-        .attr("height", `10px`)
+        .attr("height", `20px`)
         .append("g");
       svg
         .append("line")
@@ -65,6 +65,7 @@ export default {
 
       const tooltip = select(`#${this.tooltipId}`)
         .style('font-size', '10px')
+        .style('pointer-events', `none`)
         .style('line-height', '10px')
 
       svg
