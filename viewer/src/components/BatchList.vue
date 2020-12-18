@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-row flex-wrap">
-    <div class="flex col-12 h1 bold my3">Batches</div>
+  <div class="flex flex-row flex-wrap my3">
+    <div class="flex col-12 h1 bold">Batches</div>
     <div class="flex flex-wrap col-12">
       <Loading v-if="fetching" />
       <div v-if="error" class="flexc">
@@ -10,7 +10,7 @@
         </h1>
       </div>
       <div
-        class="flex lg-col-4 md-col-6 col-12 batch-row clearfix px2 py2"
+        class="flex lg-col-4 md-col-6 batch-row clearfix py2"
         v-for="(batch, idx) in elementmap"
         :key="batch.query"
       >
@@ -82,9 +82,11 @@ h2 {
   cursor: pointer;
 
   &:hover {
-    border: 1px solid black;
-    border-left-width: 0px;
-    border-right-width: 0px;
+    // background: #ddd;
+    box-sizing: border;
+    border-top: 1px solid black;
+    // border-left-width: 0px;
+    // border-right-width: 0px;
   }
 }
 

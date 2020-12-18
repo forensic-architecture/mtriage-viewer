@@ -23,7 +23,7 @@
       :label="label"
       :threshold="threshold"
     />
-    <VideoCell
+    <!-- <VideoCell
       v-for="(video, key) in elements"
       v-if="!!video.webpage_url"
       :key="key"
@@ -37,7 +37,7 @@
       :scores="getScores(video)"
       :label="label"
       :threshold="threshold"
-    ></VideoCell>
+    ></VideoCell> -->
   </div>
 </template>
 

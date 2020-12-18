@@ -13,4 +13,6 @@ export function fmtMinSec(num) {
 export const yyyymmddParse = timeParse("%Y%m%d");
 export const formatDate = timeFormat("%d/%m/%Y");
 
+export const formatPercentage = d => (d * 100).toFixed(1);
+
 // console.log(yyyymmdd("20200303"));
