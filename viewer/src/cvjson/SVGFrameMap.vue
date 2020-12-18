@@ -74,6 +74,7 @@ export default {
         .enter()
         .append("rect")
         .attr("fill", `red`)
+        .attr("opacity", 0.5)
         .attr("x", (d) => `${scaleX(d.frame)}%`)
         .attr("y", 0)
         .attr("opacity", .7)

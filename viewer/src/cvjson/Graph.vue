@@ -2,8 +2,7 @@
   <div class="flex flex-column col-12">
     <h3>Other Videos</h3>
     <div class="flex flex-row bold border-bottom h6">
-      <div class="col-1">ID</div>
-      <div class="col-3">Title</div>
+      <div class="col-4">Title</div>
       <div class="col-6">Description</div>
       <div class="col-1">Duration</div>
       <div class="col-1">Upload Date</div>

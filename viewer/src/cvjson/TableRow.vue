@@ -1,7 +1,14 @@
 <template>
-  <div class="flex flex-row flex-wrap border-bottom my2 h6">
-    <div class="col-1">{{ video_id }}</div>
-    <div class="col-3">{{ title }}</div>
+  <div class="flex flex-row flex-wrap border-bottom h6 pt3">
+    <!-- <div class="col-1">{{ video_id }}</div> -->
+    <div class="col-4">
+      <div class="flex flex-column">
+        <div>
+          {{ title }}
+        </div>
+        <div class="mt1 italic">id: {{ video_id }}</div>
+      </div>
+    </div>
     <div class="col-6">{{ description }}</div>
     <div class="col-1">{{ fmtDuration }}</div>
     <div class="col-1">{{ date }}</div>
