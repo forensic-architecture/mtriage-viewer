@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import FrameMap from "./FrameMap.vue";
+// import FrameMap from "./FrameMap.vue";
 import SVGFrameMap from "./SVGFrameMap";
 import { fmtMinSec, formatDate, yyyymmddParse } from "../lib/util";
 

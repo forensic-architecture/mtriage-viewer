@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div class="absolute flex-column h6 p1 rounded" :id="tooltipId"></div>
+    <div class="absolute flex-column h6 p1 ml1 rounded" :id="tooltipId"></div>
     <div class="col-12" :id="svgId"></div>
   </div>
 </template>
@@ -86,7 +86,7 @@ export default {
         .on('mouseenter', function(d, i) {
           tooltip
             .style('transform', `translate(${d.layerX}px, -10px)`)
-            .style('background', 'rgba(230, 230, 230, .4)')
+            .style('background', 'rgba(230, 230, 230, .9)')
             .html(`
               <div>
                 Time: ${fmtMinSec(d.target.__data__.frame)}

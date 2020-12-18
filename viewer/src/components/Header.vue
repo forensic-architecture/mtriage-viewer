@@ -8,9 +8,9 @@
       }"
       tag="div"
     >
-      <div class="flex lg-col-2 col-12">.mtbatch viewer</div>
+      <div class="flex lg-col-3 col-12">.mtbatch viewer</div>
     </router-link>
-    <div class="flex lg-col-2 col-12">v / {{ version }}</div>
+    <div class="flex lg-col-1 col-12">v / {{ version }}</div>
     <div class="flex lg-col-2 col-12">
       available batches / 2
     </div>
