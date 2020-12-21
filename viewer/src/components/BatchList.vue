@@ -10,7 +10,7 @@
         </h1>
       </div>
       <div
-        class="flex lg-col-4 md-col-6 batch-row clearfix py2"
+        class="flex col-12 lg-col-4 md-col-6 batch-row clearfix py2"
         v-for="(batch, idx) in elementmap"
         :key="batch.query"
       >
@@ -26,9 +26,9 @@
             v-if="batch.elements !== null"
             @click="SET_ACTIVE_BATCH(batch)"
           >
-            <div class="lg-col-2 sm-col-12 h2">{{ idx + 1 }}/</div>
+            <div class="lg-col-2 col-12 h2 bold">{{ idx + 1 }}/</div>
             <div class="flex flex-column align-bottom">
-              <div class="h3 bold">{{ batch.query.replace(/\//g, "") }}</div>
+              <div class="h3">{{ batch.query.replace(/\//g, "") }}</div>
               <div class="mt2">{{ batch.elements.length }} elements</div>
               <div class="">Generated on: 01.12.2020</div>
               <div class="mt2">

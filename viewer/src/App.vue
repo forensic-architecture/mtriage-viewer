@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="app"
-    class="clearfix m2 mx3 m-auto flex flex-column justify-between left-align"
-  >
+  <div id="app" class="clearfix m2 mx3 flex flex-column left-align">
     <Header :version="version" />
     <!-- <div class="main-app flex flex-column justify-between left-align"> -->
     <!-- <About /> -->
@@ -78,7 +75,7 @@ body {
   color: #2c3e50;
   display: flex;
   flex-direction: column;
-  max-width: 1280px;
+  max-width: 1920;
   // margin-top: 60px;
   // margin: 0px;
 }

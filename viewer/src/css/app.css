@@ -10,3 +10,7 @@ a:hover {
   background-color: var(--fa-red);
   color: var(--white) !important;
 }
+
+.pointer {
+  cursor: pointer;
+}
