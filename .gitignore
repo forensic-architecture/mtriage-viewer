@@ -1,11 +1,26 @@
-.vscode/
 .DS_Store
+node_modules
+dist
+src/assets/class_vid*
+src/assets/test*
 
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
 tags
 tags.lock
 tags.temp
-
-server/mtbatches/
-server/__pycache__
-
-viewer/.env
