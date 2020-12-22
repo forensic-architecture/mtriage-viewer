@@ -1,86 +1,82 @@
 <template>
   <div
     v-if="this.frames !== null && this.scores !== null"
-    class="frame-map"
+    class="flex flex-row"
   >
-    <div class="keyframe" v-for="index in this.length">
-      <v-tooltip
-        v-if="isOn(index)"
-        top
-        :open-delay="120"
-        :key="index"
-      >
+    <div
+      class="keyframe"
+      v-for="index in this.length"
+      v-bind:key="`frame-map-${index}`"
+    >
+      <v-tooltip v-if="isOn(index)" top :open-delay="120" :key="index">
         <template v-slot:activator="{ on, attrs }">
-        <span
-          class="on"
-          v-on="on"
-          v-bind="attrs"
-          v-on:click="openFrame(index)"
-          :style="getFrameColor(index)"
-        />
+          <span
+            class="on"
+            v-on="on"
+            v-bind="attrs"
+            v-on:click="openFrame(index)"
+            :style="getFrameColor(index)"
+          />
         </template>
-        <span>{{ timeFmt(index) }}</span><br>
-        <span>{{ scoreFmt(index)}}</span>
+        <span>{{ timeFmt(index) }}</span
+        ><br />
+        <span>{{ scoreFmt(index) }}</span>
       </v-tooltip>
-      <div
-        v-else
-        :key="index"
-        class="off"
-      />
+      <div v-else :key="index" class="off" />
     </div>
   </div>
 </template>
 
 <script>
-import { fmtMinSec } from '../lib/util'
+import { fmtMinSec } from "../lib/util";
 
 export default {
-  name: 'FrameMap',
+  name: "FrameMap",
   props: {
     video_id: String,
     length: Number,
     frames: Array,
     scores: Array,
     label: String,
-    threshold: Number
+    threshold: Number,
   },
   methods: {
     isOn: function(idx) {
-      const _idx = this.frames.indexOf(idx)
+      const _idx = this.frames.indexOf(idx);
       if (_idx > -1 && this.scores[_idx] > this.threshold) {
-        return true
+        return true;
       }
-      return false
+      return false;
     },
     openFrame: function(idx) {
-      window.open(`https://youtu.be/${this.video_id}?t=${idx}`, '_blank')
+      window.open(`https://youtu.be/${this.video_id}?t=${idx}`, "_blank");
     },
     timeFmt: function(idx) {
-      return fmtMinSec(idx)
+      return fmtMinSec(idx);
     },
     scoreFmt: function(idx) {
-      const _idx = this.frames.indexOf(idx)
-      const score = this.scores[_idx] * 100
-      return `${score.toFixed(2)}%`
+      const _idx = this.frames.indexOf(idx);
+      const score = this.scores[_idx] * 100;
+      return `${score.toFixed(2)}%`;
     },
     getFrameColor: function(idx) {
-      const _idx = this.frames.indexOf(idx)
-      const score = this.scores[_idx] * 100
-      return `background-color: rgb(${100 + 155 * (score / 40)}, 0, 0)`
+      const _idx = this.frames.indexOf(idx);
+      const score = this.scores[_idx] * 100;
+      return `background-color: rgb(${100 + 155 * (score / 40)}, 0, 0)`;
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
 $frame-color: #cc1616;
 
-.frame-map {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  width: 100%;
-}
+// .frame-map {
+//   display: flex;
+//   flex: 1;
+//   flex-direction: row;
+//   width: 100%;
+// }
 
 .keyframe {
   display: flex;
@@ -105,5 +101,4 @@ $frame-color: #cc1616;
     flex: 1;
   }
 }
-
 </style>

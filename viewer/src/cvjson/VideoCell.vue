@@ -1,9 +1,6 @@
 <template>
-  <div
-    :class="containerClasses"
-    @click="expandItem"
-  >
-    <div class="graph-item-body" >
+  <div :class="containerClasses" @click="expandItem">
+    <div class="graph-item-body">
       <div class="graph-item-title">{{ title }}</div>
     </div>
     <div class="graph-item-footer">
@@ -16,7 +13,7 @@
         :threshold="threshold"
       />
     </div>
-     <!-- TODO: break this into another component -->
+    <!-- TODO: break this into another component -->
     <div :class="extensionClasses">
       <div class="desc-column">
         <div class="text">
@@ -43,20 +40,13 @@
 </template>
 
 <script>
-import FrameMap from './FrameMap.vue'
-import { fmtMinSec } from '../lib/util'
-
-const monthNames = [
-  "January", "February", "March",
-  "April", "May", "June", "July",
-  "August", "September", "October",
-  "November", "December"
-];
+import FrameMap from "./FrameMap.vue";
+import { fmtMinSec, formatDate, yyyymmddParse } from "../lib/util";
 
 export default {
-  name: 'VideoCell',
+  name: "VideoCell",
   components: {
-    FrameMap
+    FrameMap,
   },
   props: {
     video_id: String,
@@ -68,59 +58,53 @@ export default {
     frames: Array,
     scores: Array,
     label: String,
-    threshold: Number
+    threshold: Number,
   },
   computed: {
     rankFmt: function() {
-      return this.$vnode.key + 1
+      return this.$vnode.key + 1;
     },
     descriptionFmt: function() {
-      if (this.description == '') {
-        return 'No description.'
+      if (this.description == "") {
+        return "No description.";
       } else {
-        return this.description
+        return this.description;
       }
     },
     dateFmt: function() {
-      const d0 = `${this.uploadDate.substring(0,4)}-${this.uploadDate.substring(4,6)}-${this.uploadDate.substring(6)}`
-      const d = new Date(d0)
-      const day = d.getDate()
-      const monthIndex = d.getMonth()
-      const year = d.getFullYear()
-      return day + ' ' + monthNames[monthIndex] + ' ' + year
+      return formatDate(yyyymmddParse(this.uploadDate));
     },
     durationFmt: function() {
-      return fmtMinSec(this.duration)
+      return fmtMinSec(this.duration);
     },
     containerClasses: function() {
       if (this.state.expanded) {
-        return 'graph-item-container expanded'
+        return "graph-item-container expanded";
       } else {
-        return 'graph-item-container'
+        return "graph-item-container";
       }
     },
     extensionClasses: function() {
       if (this.state.expanded) {
-        return 'graph-item-extension'
+        return "graph-item-extension";
       } else {
-        return 'graph-item-extension no-display'
+        return "graph-item-extension no-display";
       }
     },
-
   },
   data: function() {
     return {
       state: {
-        expanded: false
-      }
-    }
+        expanded: false,
+      },
+    };
   },
   methods: {
     expandItem: function() {
-      this.state.expanded = !this.state.expanded
-    }
-  }
-}
+      this.state.expanded = !this.state.expanded;
+    },
+  },
+};
 </script>
 
 <style lang="scss">
@@ -147,7 +131,6 @@ $open-anim: 0s ease-in;
     max-height: 40px + $extension-size;
   }
   &:hover {
-
     cursor: crosshair;
     background-color: lighten($card-colour, 30%);
     .graph-item-footer {
@@ -212,5 +195,4 @@ $open-anim: 0s ease-in;
 .no-display {
   display: none !important;
 }
-
 </style>

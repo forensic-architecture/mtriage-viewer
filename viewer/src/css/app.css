@@ -1,0 +1,16 @@
+@import "./imports.css";
+
+a {
+  color: black;
+  text-decoration: none;
+  border-bottom: 1px solid var(--fa-red);
+}
+
+a:hover {
+  background-color: var(--fa-red);
+  color: var(--white) !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
