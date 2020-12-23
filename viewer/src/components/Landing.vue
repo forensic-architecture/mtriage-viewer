@@ -18,13 +18,13 @@ export default {
   },
   computed: {
     ...mapState({
-      batch: (state) => state.activeBatch,
-      labels: (state) => state.activeLabels,
+      // batch: (state) => state.activeBatch,
+      // labels: (state) => state.activeLabels,
     }),
-    viewerComp: function() {
-      const etypePrefix = !!this.batch ? this.batch.etype : "any";
-      return `${etypePrefix}Viewer`;
-    },
+    // viewerComp: function() {
+    //   const etypePrefix = !!this.batch ? this.batch.etype : "any";
+    //   return `${etypePrefix}Viewer`;
+    // },
   },
 };
 </script>

@@ -11,7 +11,7 @@
       </div>
       <div
         class="flex col-12 lg-col-4 md-col-6 batch-row clearfix py2"
-        v-for="(batch, idx) in elementmap"
+        v-for="(batch, idx) in allBatches"
         :key="batch.query"
       >
         <router-link
@@ -60,7 +60,7 @@ export default {
   computed: {
     ...mapState({
       fetching: (state) => state.fetching,
-      elementmap: (state) => state.elementmap,
+      allBatches: (state) => state.allBatches,
       error: (state) => state.error,
     }),
   },

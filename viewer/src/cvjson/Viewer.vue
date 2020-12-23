@@ -85,6 +85,7 @@ export default {
   props: {
     batch: Object,
     labels: Array,
+    data: Array,
   },
   data() {
     return { pageNo: 0 };
@@ -105,6 +106,10 @@ export default {
       });
     },
   },
+  updated() {
+    console.log(this.data);
+    console.log(this);
+  },
   computed: {
     ...mapState({
       fetching: "fetching",
@@ -116,6 +121,7 @@ export default {
     }),
 
     availableLabels() {
+      return this.data && [...new Set(this.data.map((d) => d.label))];
       const av = this.ranking ? Object.keys(this.ranking) : [];
       const labels = this.labels.filter((l) => av.includes(l));
       labels.unshift("");
