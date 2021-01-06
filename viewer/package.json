@@ -7,7 +7,7 @@
     "dev": "vue-cli-service serve --open --host localhost"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chokidar": "^3.4.3",
     "core-js": "^3.6.5",
     "d3": "^6.3.1",
