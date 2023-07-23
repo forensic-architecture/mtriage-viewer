@@ -1,4 +1,7 @@
 ## Run in development
+
+NOTE: if you are using poetry >= 1.22, you should first run ``poetry config experimental.new-installer false`` to use the old installer. You can check your poetry version with ``poetry --version``.
+
 ```
 poetry install
 poetry run python app.py

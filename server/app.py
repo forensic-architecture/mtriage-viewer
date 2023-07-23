@@ -27,8 +27,8 @@ class StorageType(Enum):
     S3 = 2
 
 
-ROOT = "lk-iceland-personal"
-STORAGE_TYPE = StorageType.S3
+ROOT = "/Users/focus/Downloads/derived/KerasPretrained"
+STORAGE_TYPE = StorageType.Local
 
 
 def read_etype(local_fp: Path) -> str:
