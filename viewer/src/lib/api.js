@@ -9,6 +9,7 @@ function cvjson_fetchRankings (batch) {
   return Promise.resolve()
     .then(() => axios.get(url))
     .then(resp => {
+      console.log("cvjson_fetchRankings", res.data)
       return resp.data.media["ranking.json"]
     })
 }
@@ -22,12 +23,18 @@ function fetchFromBatch (query, elements) {
       url,
       data,
     }))
-    .then(res => res.data
+    .then(res => {
+      console.log("fetchfrombatch", res.data)
+      return res.data
       .map(el => ({
         element_id: el.id,
         ...el.media["preds.json"]
-      }))
+      }
+      
+      ))}
     )
+
+    
   // TODO: this is where we are.
   // return Promise.reject(Error("TODO"))
 }
@@ -37,6 +44,7 @@ function fetchAttribute (attr, query) {
   return Promise.resolve()
     .then(() => axios.get(url))
     .then(resp => {
+      console.log("fetch attribute", resp.data)
       return resp.data
     })
 }
@@ -48,6 +56,7 @@ function cvjson_fetchElements (batch, label, pageNo, limit) {
   return Promise.resolve()
     .then(() => axios.get(url))
     .then(resp => {
+      console.log("cvjson_fetchElements", resp.data)
       return resp.data
         .map(el => ({ element_id: el.id, ...el.media["preds.json"] }))
         .filter(el => el.id !== '_rank')

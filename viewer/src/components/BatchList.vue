@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h1 class="batch-header">Available Batches</h1>
+    <h1 class="batch-header" @click="log(`elementmap: ${JSON.stringify(elementmap)}`)"> Available Batches</h1>
 
     <Loading v-if="fetching" />
     <div v-if="error" class="flexc">
       <h1>A network connection error occurred. Make sure you are correctly configured.</h1>
     </div>
 
-    <div v-for="batch in elementmap">
+    <div v-for="batch in elementmap" >
       <div class="batch-row" v-if="batch.elements !== null" @click="SET_ACTIVE_BATCH(batch)">
         <h2>{{batch.query}}</h2>
         <div class="table">
@@ -32,6 +32,9 @@ export default {
   methods: {
     ...mapActions(['fetchBatches']),
     ...mapMutations(['SET_ACTIVE_BATCH']),
+    log: function (e) {
+      console.log(e);
+    } 
   },
   computed: {
     ...mapState({
@@ -44,6 +47,9 @@ export default {
     this.fetchBatches()
   }
 }
+
+
+
 </script>
 
 <style lang="scss">

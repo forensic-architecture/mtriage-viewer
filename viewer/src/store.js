@@ -5,7 +5,7 @@ import types from './mutation-types'
 
 Vue.use(Vuex)
 
-// const STUB_BATCH = {"elements":["bz9dsdDgZIE","7X2aVY8w994","mw8rsJJ1IU4","FE6ldph-64U","1NvOehAj5Uo","F_9awSnnbus","aXzMyN11CyE","rn7Pm6DsRTs","_rank","f7AVuE4DVcQ","MTlSLQujiTM"],"etype":"CvJson","query":"KerasPretrained"}
+// const STUB_BATCH = {"elements":["_VvbU89ph2M","-_uLCYyW5oI","-B-cBJzw_N0","-fYnoPXcM6I","-QisMtCcaFA","-s0WUP5-360","0ayG3W6rHlg","2dqx0ydBhfg","_rank","3lIq2swDhwc","3NrG4ZzKKZ8"],"etype":"CvJson","query":"KerasPretrained"}
 const STUB_BATCH = null
 
 export default new Vuex.Store({
@@ -22,6 +22,9 @@ export default new Vuex.Store({
       threshold: 0,
       ranking: null
     }
+  },
+  computed: {
+    console: () => console
   },
   mutations: {
     [types.FETCH_FROM_BATCH_ATTEMPT] (state) {
@@ -72,6 +75,7 @@ export default new Vuex.Store({
       commit(types.FETCH_BATCHES_ATTEMPT)
       api.fetchBatches()
         .then(result => {
+          console.log('fetchBatches: ', {result})
           commit(types.FETCH_BATCHES, result.data)
         })
         .catch(err => {
@@ -82,6 +86,7 @@ export default new Vuex.Store({
       commit(types.FETCH_FROM_BATCH_ATTEMPT)
       api.fetchFromBatch(data.q, data.elements)
         .then(result => {
+          console.log('fetchFromBatch: ', {result})
           commit(types.FETCH_FROM_BATCH, result)
         })
         .catch(err => {
@@ -92,6 +97,7 @@ export default new Vuex.Store({
       commit(types.FETCH_ATTRIBUTE_ATTEMPT)
       api.fetchAttribute(data.attribute, data.query)
         .then(result => {
+          console.log('fetchAttribute: ', {result})
           commit(types.FETCH_ATTRIBUTE, { attribute: data.attribute, value: result })
         })
         .catch(err => {

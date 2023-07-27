@@ -12,11 +12,13 @@ from configparser import RawConfigParser
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+
 # TODO: pass as CLI args
 # ROOT =  "/Users/lachlankermode/code/_fa/mtriage/media/demo_official/3/Youtube/derived"
 # STORAGE_TYPE = StorageType.Local
 
-EM_STORE = "./mtbatches/map.pkl"
+EM_STORE = "/Users/focus/Desktop/batches/Pass1/YouTube/derived/Frames/.mtbatch"
+
 
 app = Flask(__name__)
 CORS(app)
@@ -27,14 +29,15 @@ class StorageType(Enum):
     S3 = 2
 
 
-ROOT = "/Users/focus/Downloads/derived/KerasPretrained"
+ROOT = "/Users/focus/Desktop/batches_new"
 STORAGE_TYPE = StorageType.Local
 
 
 def read_etype(local_fp: Path) -> str:
-    cfgParser = RawConfigParser()
-    cfgParser.read(local_fp)
-    return cfgParser.get("etype", "etype")
+    return 'CvJson'
+    # cfgParser = RawConfigParser()
+    # cfgParser.read(local_fp)
+    # return cfgParser.get("etype", "etype")
 
 
 class Batch(ABC):
@@ -62,8 +65,12 @@ class Batch(ABC):
 
 
 class LocalBatch(Batch):
-    def __init__(self, query, etype, path, elements=None):
-        self.path = Path(path)
+    def __init__(self, query, etype, root, ranking={}, elements=None):
+        self.root = root
+        with open(root / "__META/rankings.json", "r") as f:
+            self.ranking = json.load(f)
+        # self.unpack_element("__RANKING")["media"]["rankings.json"]
+        self.path = Path(root)
         super().__init__(query, etype, elements=elements)
 
     def index_elements(self):
@@ -72,11 +79,13 @@ class LocalBatch(Batch):
     @staticmethod
     def unpack_element(pth: Path, suffixes: List[str] = [".json"]) -> dict:
         media = {}
+        print(pth)
         for f in [t for t in pth.iterdir() if t.suffix in suffixes]:
             with open(f) as fl:
                 data = json.load(fl)
             media[f.name] = data
 
+        print(pth.name)
         return {
             "id": pth.name,
             "media": media,
@@ -150,6 +159,7 @@ class S3Batch(Batch):
 
 
 def save_map(mp):
+    print('save_map', mp)
     with open(EM_STORE, "wb") as fp:
         pickle.dump([(x.__class__.__name__, x.__dict__) for x in mp["batches"]], fp)
 
@@ -162,7 +172,7 @@ def load_map():
         batches = [
             (
                 globals()[typ],
-                {k: dct[k] for k in ["query", "etype", "elements", "root", "ranking"]},
+                {k: dct.get(k) for k in ["query", "etype", "elements", "root", "ranking"]},
             )
             for (typ, dct) in raw
         ]
@@ -179,7 +189,7 @@ class Local:
             for d in dirs:
                 absp = Path(root) / d
                 if (absp / ".mtbatch").is_file():
-                    etype = read_etype(absp / ".mtbatch")
+                    etype = read_etype(absp / ".mtbatch") 
                     batches.append(LocalBatch(d, etype, absp))
         return batches
 
@@ -229,6 +239,7 @@ def index(root: str, storage_type: StorageType):
         StorageType.S3: S3.get_batches,
     }.get(storage_type, lambda _: [])
 
+    print('running index')
     return {
         "batches": get_batches(root),
     }
@@ -274,6 +285,7 @@ def batch():
         data = request.json
         q = data.get("query")
         elements = data.get("elements")
+        print('elements: ', elements)
         batch = batch_from_query(batches, q)
         return jsonify([ batch.get_element(el) for el in elements ])
 
@@ -288,6 +300,7 @@ def batch_attribute():
     mp = load_map()
     q = request.args.get("q")
     attr = request.args.get("a")
+    # import pdb; pdb.set_trace()
     if q is None:
         return jsonify([x.get(attr) for x in mp["batches"]])
     try:

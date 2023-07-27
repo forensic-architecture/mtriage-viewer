@@ -25,6 +25,7 @@ export default {
   computed: mapState({
     version: 'version',
     activeBatch: state => state.activeBatch,
+    console: () => console,
   }),
   components: {
     Header,
